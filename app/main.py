@@ -37,7 +37,7 @@ def library_scraping(url):
         fulfillmentText = re.sub("Coordinatore Scientifico:", "\nCoordinatore Scientifico:", fulfillmentText)
     return fulfillmentText
 
-@app.route("/webhooks", methods=["POST"])
+@app.route("/", methods=["POST"])
 def webhooks():
     req = request.get_json(silent=True, force=True)
     fulfillmentText = ""
