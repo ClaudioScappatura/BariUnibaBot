@@ -661,7 +661,7 @@ def webhooks():
     elif query_result.get("intent").get("displayName") == "JobPlacement":
         fulfillmentText = job_placement_scraping(URL_RESOURCES)
 
-    elif query_result.get("intent").get("displayName") == "cartaIdentitaInfo":
+    elif query_result.get("intent").get("displayName") == "CDI":
         fulfillmentText = cie_scraping(URL_CIE)
 
     # if fulfillmentText == "":
