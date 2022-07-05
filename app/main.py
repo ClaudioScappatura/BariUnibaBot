@@ -125,7 +125,8 @@ def personal_scraping(url, query_text):
 
     return fulfillmentText
 
-#craping sulle info inerenti alla CDI elettronica
+
+# craping sulle info inerenti alla CDI elettronica
 def cie_scraping(url):
     fulfillmentText = ""
     soup = parsing_html(url)
@@ -153,6 +154,7 @@ def cie_scraping(url):
             continue
 
     return fulfillmentText
+
 
 def library_scraping(url):
     fulfillmentText = ""
@@ -474,7 +476,8 @@ def news_scraping(url):
 
     for i in soup.find_all(class_="portletWrapper"):
 
-        if i["id"] == "portletwrapper-436f6e74656e7457656c6c506f72746c6574732e42656c6f77506f72746c65744d616e61676572320a636f6e746578740a2f756e696261342f726963657263612f646970617274696d656e74692f696e666f726d61746963612f646970617274696d656e746f2d64692d696e666f726d61746963610a7a6f6e612d6e657773":
+        if i[
+            "id"] == "portletwrapper-436f6e74656e7457656c6c506f72746c6574732e42656c6f77506f72746c65744d616e61676572320a636f6e746578740a2f756e696261342f726963657263612f646970617274696d656e74692f696e666f726d61746963612f646970617274696d656e746f2d64692d696e666f726d61746963610a7a6f6e612d6e657773":
             for j in i.children:
                 try:
                     if j["id"] == "portlet-newszona":
@@ -505,7 +508,8 @@ def events_scraping(url):
         span_tag.replace_with('')
 
     for i in soup.find_all(class_="portletWrapper"):
-        if i["id"] == "portletwrapper-436f6e74656e7457656c6c506f72746c6574732e42656c6f77506f72746c65744d616e61676572310a636f6e746578740a2f756e696261342f726963657263612f646970617274696d656e74692f696e666f726d61746963612f646970617274696d656e746f2d64692d696e666f726d61746963610a7a6f6e612d6576656e7469":
+        if i[
+            "id"] == "portletwrapper-436f6e74656e7457656c6c506f72746c6574732e42656c6f77506f72746c65744d616e61676572310a636f6e746578740a2f756e696261342f726963657263612f646970617274696d656e74692f696e666f726d61746963612f646970617274696d656e746f2d64692d696e666f726d61746963610a7a6f6e612d6576656e7469":
             for j in i.children:
                 try:
                     if j["id"] == "portlet-newszona":
@@ -527,32 +531,31 @@ def events_scraping(url):
 
 
 def uni_research_scraping(url):
-
     fulfillmentText = '**ORIENTAMENTO**\n'
     soup = parsing_html(url)
-    #paragrafi utili
+    # paragrafi utili
     count_useful = 0
     for i in soup.find_all('div'):
         try:
             if i["id"] == "parent-fieldname-description":
                 fulfillmentText += i.text + "\n\n"
-                fulfillmentText = re.sub("  +","",fulfillmentText)
+                fulfillmentText = re.sub("  +", "", fulfillmentText)
             elif i["id"] == "content-core":
                 for j in i.children:
-                        for k in j.descendants:
-                            try:
-                                    if re.search("summary", k["class"][0], re.IGNORECASE):
-                                        fulfillmentText += "**** " + k.a.text + " ****" + "\n"
-                                        fulfillmentText += "link:\n" + k.a["href"] + "\n"
-                                    elif re.search("description", k["class"][0], re.IGNORECASE):
-                                        fulfillmentText += "riassunto:\n" + k.text + "\n\n\n"
-                                    count_useful += 1
-                                    #primi 17 sono i paragrafi utili
-                                    if count_useful == 16:
-                                        count_useful += 1
-                                        break
-                            except:
-                                continue
+                    for k in j.descendants:
+                        try:
+                            if re.search("summary", k["class"][0], re.IGNORECASE):
+                                fulfillmentText += "**** " + k.a.text + " ****" + "\n"
+                                fulfillmentText += "link:\n" + k.a["href"] + "\n"
+                            elif re.search("description", k["class"][0], re.IGNORECASE):
+                                fulfillmentText += "riassunto:\n" + k.text + "\n\n\n"
+                            count_useful += 1
+                            # primi 17 sono i paragrafi utili
+                            if count_useful == 16:
+                                count_useful += 1
+                                break
+                        except:
+                            continue
         except:
             continue
     return fulfillmentText
@@ -563,7 +566,8 @@ def job_placement_scraping(url):
     soup = parsing_html(url)
 
     for i in soup.find_all(class_="portletWrapper"):
-        if i["id"] == "portletwrapper-436f6e74656e7457656c6c506f72746c6574732e42656c6f77506f72746c65744d616e61676572310a636f6e746578740a2f756e696261342f726963657263612f646970617274696d656e74692f696e666f726d61746963612f646970617274696d656e746f2d64692d696e666f726d61746963610a6a6f622d706c6163656d656e74":
+        if i[
+            "id"] == "portletwrapper-436f6e74656e7457656c6c506f72746c6574732e42656c6f77506f72746c65744d616e61676572310a636f6e746578740a2f756e696261342f726963657263612f646970617274696d656e74692f696e666f726d61746963612f646970617274696d656e746f2d64692d696e666f726d61746963610a6a6f622d706c6163656d656e74":
             for j in i.children:
                 try:
                     if re.search("portlet-static-job-placement", j["class"][2], re.IGNORECASE):
@@ -656,7 +660,7 @@ def webhooks():
 
     elif query_result.get("intent").get("displayName") == "JobPlacement":
         fulfillmentText = job_placement_scraping(URL_RESOURCES)
-        
+
     elif query_result.get("intent").get("displayName") == "cartaIdentitaInfo":
         fulfillmentText = cie_scraping(URL_CIE)
 
@@ -670,5 +674,4 @@ def webhooks():
         "source": "webhookdata"
     }
 
-
-#app.run(debug=True, port=5000)
+# app.run(debug=True, port=5000)
