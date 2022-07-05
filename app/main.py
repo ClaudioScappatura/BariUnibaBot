@@ -45,6 +45,9 @@ URL_ERASMUS = "https://www.uniba.it/ricerca/dipartimenti/informatica/didattica/e
 # url intent Orientamento
 URL_UNI_RESEARCH = "https://www.uniba.it/ricerca/dipartimenti/informatica/tutorato/orientamento-e-tutorato-1"
 
+# url intent carta di identità
+URL_CIE = "https://www.comune.bari.it/web/egov/-/carta-d-identita-elettronica-cie-"
+
 
 def parsing_html(url):
     response = requests.get(url=url)
