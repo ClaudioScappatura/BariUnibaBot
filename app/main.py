@@ -122,6 +122,34 @@ def personal_scraping(url, query_text):
 
     return fulfillmentText
 
+#craping sulle info inerenti alla CDI elettronica
+def cie_scraping(url):
+    fulfillmentText = ""
+    soup = parsing_html(url)
+
+    for i in soup.find('div', class_="accordion-body collapse in"):
+        try:
+            # è la lista dei figli del primo DIV
+            for k in i.children:
+
+                try:
+                    # è la lista di figli di ogni TAG all'interno di DIV
+                    for z in k.children:
+                        if str(z.name).isupper() or (z.name == "strong" and k.name == "p"):
+                            fulfillmentText += "\n"
+                        fulfillmentText += z.text
+                        if (z.name == "strong" and k.name != "br") or z.name == "li":
+                            fulfillmentText += "\n"
+
+                except:
+                    fulfillmentText += k.text
+                    fulfillmentText += "\n"
+
+        except:
+            print("")
+            continue
+
+    return fulfillmentText
 
 def library_scraping(url):
     fulfillmentText = ""
@@ -625,6 +653,9 @@ def webhooks():
 
     elif query_result.get("intent").get("displayName") == "JobPlacement":
         fulfillmentText = job_placement_scraping(URL_RESOURCES)
+        
+    elif query_result.get("intent").get("displayName") == "cartaIdentitaInfo":
+        fulfillmentText = cie_scraping(URL_CIE)
 
     # if fulfillmentText == "":
     #    fulfillmentText = "Ho ancora tanto da imparare, puoi ripetere?"
