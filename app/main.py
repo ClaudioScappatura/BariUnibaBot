@@ -135,22 +135,34 @@ def cie_scraping(url):
         try:
             # è la lista dei figli del primo DIV
             for k in i.children:
+                if k.name is not None:
+                    # verifica sul numero di figli
+                    has_child = len(k.findAll()) != 0
+                    # se il tag ha figli allora cerca e stampa i figli
+                    if has_child:
+                        # è la lista di figli di ogni TAG all'interno di DIV
+                        for z in k.children:
+                            if z.name is not None:
+                                # se è una scritta in stampatello, la stampo, la tolgo dal tago superiore, stampo il testo del tag padre e vado a capo
+                                if z.text.isupper():
+                                    fulfillmentText += "\n"
+                                    fulfillmentText += z.text
+                                    fulfillmentText += "\n"
+                                    fulfillmentText += k.text.replace(str(z.text), "")
+                                    fulfillmentText += "\n"
 
-                try:
-                    # è la lista di figli di ogni TAG all'interno di DIV
-                    for z in k.children:
-                        if str(z.name).isupper() or (z.name == "strong" and k.name == "p"):
-                            fulfillmentText += "\n"
-                        fulfillmentText += z.text
-                        if (z.name == "strong" and k.name != "br") or z.name == "li":
-                            fulfillmentText += "\n"
+                                # se il tag è 'li' (elenco puntato), allora metti un a capo
+                                elif z.name == "li":
+                                    fulfillmentText += "- "
+                                    fulfillmentText += z.text
+                                    fulfillmentText += "\n"
 
-                except:
-                    fulfillmentText += k.text
-                    fulfillmentText += "\n"
+                    # se il tag non ha figli, stampa il suo testo
+                    else:
+                        fulfillmentText += k.text
+                        fulfillmentText += "\n"
 
         except:
-            print("")
             continue
 
     return fulfillmentText
