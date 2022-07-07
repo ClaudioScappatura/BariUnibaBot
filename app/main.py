@@ -132,7 +132,7 @@ def cie_scraping(url, text):
     soup = parsing_html(url)
     if text is "":
         text = None
-        
+
     if text is not None:
         # flag per la gestione delle stampe
         printText = False
