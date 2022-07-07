@@ -702,6 +702,8 @@ def webhooks():
             fulfillmentText = cie_scraping(URL_CIE, "CARATTERISTICHE")
         elif query_result["parameters"]["RichiestaCDI"] != "":
             fulfillmentText = cie_scraping(URL_CIE, "QUANDO")
+        else:
+            fulfillmentText = cie_scraping(URL_CIE, None)
 
 
     # if fulfillmentText == "":
