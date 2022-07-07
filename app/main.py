@@ -130,8 +130,6 @@ def personal_scraping(url, query_text):
 def cie_scraping(url, text):
     fulfillmentText = ""
     soup = parsing_html(url)
-    if text is "":
-        text = None
 
     if text is not None:
         # flag per la gestione delle stampe
@@ -656,7 +654,8 @@ def webhooks():
         elif query_result["parameters"]["caratteristicheCDI"] is not "":
             fulfillmentText = cie_scraping(URL_CIE, "CARATTERISTICHE")
         else:
-            fulfillmentText = cie_scraping(URL_CIE, "")
+            fulfillmentText = cie_scraping(URL_CIE, None)
+        #inserire su dialogFlow altre entity e mettere qui i restanti casi
 
     elif query_result.get("intent").get("displayName") == "Corsi di laurea":
 

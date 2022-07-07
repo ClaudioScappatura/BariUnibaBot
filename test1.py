@@ -18,6 +18,9 @@ def parsing_html(url):
 def cie_scraping(url, text):
     fulfillmentText = ""
     soup = parsing_html(url)
+    if text == "":
+        text = None
+
     if text is not None:
         # flag per la gestione delle stampe
         printText = False
@@ -28,56 +31,68 @@ def cie_scraping(url, text):
                 text = "QUANDO SI PUO’ RICHIEDERE LA CIE"
             case "CHI":
                 text = "CHI PUO’ RICHIEDERE LA CIE"
-            case "PROCEDURA":
-                text = "PROCEDURA DI RILASCIO"
             case "CARATTERISTICHE":
                 text = "CARATTERISTICHE DEL DOCUMENTO"
     else:
         printText = True
 
+
     # se la variabile text è vuota, stampa tutte le info riguardo la CDI, altrimenti
-    for i in soup.find('div', class_="accordion-body collapse in"):
+    # ricerca tutti i DIV di quella classe
+    for i in soup.findAll('div', class_="accordion-body collapse in"):
         try:
-            # è la lista dei figli del primo DIV
-            for k in i.children:
-                if k.name is not None:
-                    # verifica sul numero di figli
-                    has_child = len(k.findAll()) != 0
-                    # se il tag ha figli allora cerca e stampa i figli
-                    if has_child:
-                        # è la lista di figli di ogni TAG all'interno di DIV
-                        for z in k.children:
-                            if z.name is not None:
-                                # se è una scritta in stampatello, la stampo, la tolgo dal tago superiore, stampo il testo del tag padre e vado a capo
-                                if z.text.isupper():
-                                    if text is not None:
-                                        printText = False
-                                    else:
-                                        printText = True
-                                    if text is not None and text in z.text:
-                                        printText = True
-                                    if printText is True:
-                                        fulfillmentText += "\n"
-                                        fulfillmentText += z.text
-                                        fulfillmentText += "\n"
-                                        fulfillmentText += k.text.replace(str(z.text), "")
-                                        fulfillmentText += "\n"
+            # analizza il primo figlio di ogni DIV trovato (il primo figlio sarà un altro DIV
+            for t in i.children:
+                try:
+                    # è la lista dei figli del secondo DIV
+                    for k in t.children:
+                        if k.name is not None:
+                            # verifica sul numero di figli
+                            has_child = len(k.findAll()) != 0
+                            # se il tag ha figli allora cerca e stampa i figli
+                            if has_child:
+                                # è la lista di figli di ogni TAG all'interno di DIV
+                                for z in k.children:
+                                    if z.name is not None:
+                                        # se è una scritta in stampatello senza tag che la precedono allora la stampo, la tolgo dal tag superiore, stampo il testo del tag padre e vado a capo
+                                        if z.text.isupper() and len(z.findPreviousSiblings()) == 0:
+                                            if text is not None:
+                                                printText = False
+                                            else:
+                                                printText = True
+                                            if text is not None and text in z.text:
+                                                printText = True
+                                            if printText is True:
+                                                fulfillmentText += "\n"
+                                                fulfillmentText += z.text
+                                                fulfillmentText += "\n"
+                                                fulfillmentText += k.text.replace(str(z.text), "")
+                                                fulfillmentText += "\n"
 
-                                # se il tag è 'li' (elenco puntato), allora metti un a capo
-                                elif z.name == "li" and printText is True:
-                                    fulfillmentText += "- "
-                                    fulfillmentText += z.text
+                                        # se il tag è 'li' (elenco puntato), allora metti un a capo
+                                        elif z.name == "li" and printText is True:
+                                            fulfillmentText += "- "
+                                            fulfillmentText += z.text
+                                            fulfillmentText += "\n"
+                                        else:
+                                            if printText is True:
+                                                fulfillmentText += z.text
+
+
+                            # se il tag non ha figli, stampa il suo testo
+                            else:
+                                if printText is True:
+                                    fulfillmentText += k.text
                                     fulfillmentText += "\n"
-
-                    # se il tag non ha figli, stampa il suo testo
-                    else:
-                        if printText is True:
-                            fulfillmentText += k.text
-                            fulfillmentText += "\n"
+                except:
+                    continue
         except:
             continue
+
 
     return fulfillmentText
 
 
-print(cie_scraping(URL_CIE, "CARATTERISTICHE"))
+
+
+print(cie_scraping(URL_CIE, None))
