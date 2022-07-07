@@ -15,11 +15,9 @@ def parsing_html(url):
 
 
 # craping sulle info inerenti alla CDI elettronica
-def cie_scraping(url, text):
+def cie_scraping(url, text, context):
     fulfillmentText = ""
     soup = parsing_html(url)
-    if text == "":
-        text = None
 
     if text is not None:
         # flag per la gestione delle stampe
@@ -33,13 +31,28 @@ def cie_scraping(url, text):
                 text = "CHI PUO’ RICHIEDERE LA CIE"
             case "CARATTERISTICHE":
                 text = "CARATTERISTICHE DEL DOCUMENTO"
+    elif context is not None:
+        match context:
+            case "COME":
+                context = "accordion_come_5469203"
+            case "COSTI":
+                context = "accordion_costi_5469203"
+            case "TEMPI":
+                context = "accordion_tempi_5469203"
+            case "DOVE":
+                context = "accordion_dove_5469203"
     else:
         printText = True
 
-
+    Cie_Soup = soup.findAll('div', class_="accordion-body collapse in")
     # se la variabile text è vuota, stampa tutte le info riguardo la CDI, altrimenti
     # ricerca tutti i DIV di quella classe
-    for i in soup.findAll('div', class_="accordion-body collapse in"):
+    for i in Cie_Soup:
+        if context is not None:
+            if i["id"] == context:
+                printText = True
+            else:
+                printText = False
         try:
             # analizza il primo figlio di ogni DIV trovato (il primo figlio sarà un altro DIV
             for t in i.children:
@@ -56,12 +69,14 @@ def cie_scraping(url, text):
                                     if z.name is not None:
                                         # se è una scritta in stampatello senza tag che la precedono allora la stampo, la tolgo dal tag superiore, stampo il testo del tag padre e vado a capo
                                         if z.text.isupper() and len(z.findPreviousSiblings()) == 0:
-                                            if text is not None:
-                                                printText = False
-                                            else:
-                                                printText = True
-                                            if text is not None and text in z.text:
-                                                printText = True
+                                            if context is None:
+                                                if text is not None:
+                                                    if text in z.text:
+                                                        printText = True
+                                                    else:
+                                                        printText = False
+                                                else:
+                                                    printText = True
                                             if printText is True:
                                                 fulfillmentText += "\n"
                                                 fulfillmentText += z.text
@@ -74,6 +89,11 @@ def cie_scraping(url, text):
                                             fulfillmentText += "- "
                                             fulfillmentText += z.text
                                             fulfillmentText += "\n"
+                                        # se il tag non ha fratelli precedenti e successivi, allora stampa prima il testo del padre e poi il proprio (ESCLUSIONE DUPLICATI)
+                                        elif len(z.findPreviousSiblings()) == 0 and len(z.findNextSiblings()) == 0:
+                                            if printText is True:
+                                                fulfillmentText += k.text.replace(str(z.text), "")
+                                                fulfillmentText += z.text
                                         else:
                                             if printText is True:
                                                 fulfillmentText += z.text
@@ -89,10 +109,18 @@ def cie_scraping(url, text):
         except:
             continue
 
+        # STAMPA SEZIONE ORARI
+        # NON FUNZIONA PORCO GIUDA
+        if context is not None and context == "accordion_dove_5469203":
+            fulfillmentText = ""
+            soup = parsing_html(url)
+            soup1 = soup.findAll('div', class_="accordion-body collapse in")
+            for span1 in soup1:
+                if span1["id"] == "dove-rest-content":
+                    for span2 in span1.children:
+                        print(span2)
 
     return fulfillmentText
 
 
-
-
-print(cie_scraping(URL_CIE, None))
+print(cie_scraping(URL_CIE, "QUANDO", None))
