@@ -127,10 +127,27 @@ def personal_scraping(url, query_text):
 
 
 # craping sulle info inerenti alla CDI elettronica
-def cie_scraping(url):
+def cie_scraping(url, text):
     fulfillmentText = ""
     soup = parsing_html(url)
+    if text is not None:
+        # flag per la gestione delle stampe
+        printText = False
+        match text:
+            case "PROCEDURA":
+                text = "PROCEDURA DI RILASCIO"
+            case "QUANDO":
+                text = "QUANDO SI PUO’ RICHIEDERE LA CIE"
+            case "CHI":
+                text = "CHI PUO’ RICHIEDERE LA CIE"
+            case "PROCEDURA":
+                text = "PROCEDURA DI RILASCIO"
+            case "CARATTERISTICHE":
+                text = "CARATTERISTICHE DEL DOCUMENTO"
+    else:
+        printText = True
 
+    # se la variabile text è vuota, stampa tutte le info riguardo la CDI, altrimenti
     for i in soup.find('div', class_="accordion-body collapse in"):
         try:
             # è la lista dei figli del primo DIV
@@ -145,23 +162,30 @@ def cie_scraping(url):
                             if z.name is not None:
                                 # se è una scritta in stampatello, la stampo, la tolgo dal tago superiore, stampo il testo del tag padre e vado a capo
                                 if z.text.isupper():
-                                    fulfillmentText += "\n"
-                                    fulfillmentText += z.text
-                                    fulfillmentText += "\n"
-                                    fulfillmentText += k.text.replace(str(z.text), "")
-                                    fulfillmentText += "\n"
+                                    if text is not None:
+                                        printText = False
+                                    else:
+                                        printText = True
+                                    if text is not None and text in z.text:
+                                        printText = True
+                                    if printText is True:
+                                        fulfillmentText += "\n"
+                                        fulfillmentText += z.text
+                                        fulfillmentText += "\n"
+                                        fulfillmentText += k.text.replace(str(z.text), "")
+                                        fulfillmentText += "\n"
 
                                 # se il tag è 'li' (elenco puntato), allora metti un a capo
-                                elif z.name == "li":
+                                elif z.name == "li" and printText is True:
                                     fulfillmentText += "- "
                                     fulfillmentText += z.text
                                     fulfillmentText += "\n"
 
                     # se il tag non ha figli, stampa il suo testo
                     else:
-                        fulfillmentText += k.text
-                        fulfillmentText += "\n"
-
+                        if printText is True:
+                            fulfillmentText += k.text
+                            fulfillmentText += "\n"
         except:
             continue
 
@@ -674,7 +698,11 @@ def webhooks():
         fulfillmentText = job_placement_scraping(URL_RESOURCES)
 
     elif query_result.get("intent").get("displayName") == "CDI":
-        fulfillmentText = cie_scraping(URL_CIE)
+        if query_result["parameters"]["caratteristicheCDI"] != "":
+            fulfillmentText = cie_scraping(URL_CIE, "CARATTERISTICHE")
+        elif query_result["parameters"]["RichiestaCDI"] != "":
+            fulfillmentText = cie_scraping(URL_CIE, "QUANDO")
+
 
     # if fulfillmentText == "":
     #    fulfillmentText = "Ho ancora tanto da imparare, puoi ripetere?"
