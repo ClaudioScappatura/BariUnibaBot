@@ -653,6 +653,10 @@ def webhooks():
     elif query_result.get("intent").get("displayName") == "CDI":
         if query_result["parameters"]["RichiestaCDI"] is not "":
             fulfillmentText = cie_scraping(URL_CIE, "QUANDO")
+        elif query_result["parameters"]["caratteristicheCDI"] is not "":
+            fulfillmentText = cie_scraping(URL_CIE, "CARATTERISTICHE")
+        else:
+            fulfillmentText = cie_scraping(URL_CIE, "")
 
     elif query_result.get("intent").get("displayName") == "Corsi di laurea":
 
