@@ -80,5 +80,5 @@ def cie_scraping(url, text):
     return fulfillmentText
 
 
-cus = cie_scraping(URL_CIE, None)
+cus = cie_scraping(URL_CIE, "CARATTERISTICHE")
 print(cus)
