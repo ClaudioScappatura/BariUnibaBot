@@ -699,9 +699,9 @@ def webhooks():
         fulfillmentText = job_placement_scraping(URL_RESOURCES)
 
     elif query_result.get("intent").get("displayName") == "CDI":
-        if query_result["parameters"]["caratteristicheCIE"] != "":
+        if query_result["parameters"]["caratteristicheCIE"]:
             fulfillmentText = cie_scraping(URL_CIE, "CARATTERISTICHE")
-        elif query_result["parameters"]["RichiestaCDI"] != "":
+        elif query_result["parameters"]["RichiestaCDI"]:
             fulfillmentText = cie_scraping(URL_CIE, "QUANDO")
         else:
             fulfillmentText = cie_scraping(URL_CIE, "")
