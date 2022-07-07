@@ -127,7 +127,8 @@ def personal_scraping(url, query_text):
 
 
 # craping sulle info inerenti alla CDI elettronica
-def cie_scraping(url, text):
+def cie_scraping(url):
+    text = "CARATTERISTICHE"
     fulfillmentText = ""
     soup = parsing_html(url)
     if text is not None:
@@ -140,8 +141,6 @@ def cie_scraping(url, text):
                 text = "QUANDO SI PUO’ RICHIEDERE LA CIE"
             case "CHI":
                 text = "CHI PUO’ RICHIEDERE LA CIE"
-            case "PROCEDURA":
-                text = "PROCEDURA DI RILASCIO"
             case "CARATTERISTICHE":
                 text = "CARATTERISTICHE DEL DOCUMENTO"
     else:
@@ -698,7 +697,7 @@ def webhooks():
         fulfillmentText = job_placement_scraping(URL_RESOURCES)
 
     elif query_result.get("intent").get("displayName") == "CDI":
-        fulfillmentText = cie_scraping(URL_CIE, None)
+        fulfillmentText = cie_scraping(URL_CIE)
 
     # if fulfillmentText == "":
     #    fulfillmentText = "Ho ancora tanto da imparare, puoi ripetere?"
