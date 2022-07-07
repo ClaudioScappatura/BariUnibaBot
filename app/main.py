@@ -699,9 +699,9 @@ def webhooks():
 
     elif query_result.get("intent").get("displayName") == "CDI":
         if query_result["parameters"]["caratteristicheCDI"] != "":
-            fulfillmentText = cie_scraping(URL_CIE, "CARATTERISTICHE")
+            fulfillmentText = "trovatoCaratteristicheCDI"
         elif query_result["parameters"]["RichiestaCDI"] != "":
-            fulfillmentText = cie_scraping(URL_CIE, "QUANDO")
+            fulfillmentText = "trovatoRichestaCDI"
         else:
             fulfillmentText = cie_scraping(URL_CIE, None)
 
