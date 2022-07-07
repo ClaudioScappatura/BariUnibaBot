@@ -650,6 +650,9 @@ def webhooks():
     elif query_result.get("intent").get("displayName") == "RisorseStudenti":
         fulfillmentText = resources_scraping(URL_RESOURCES)
 
+    elif query_result.get("intent").get("displayName") == "CDI":
+        if query_result["parameters"]["RichiestaCDI"] is not "":
+            fulfillmentText = cie_scraping(URL_CIE, "QUANDO")
 
     elif query_result.get("intent").get("displayName") == "Corsi di laurea":
 
@@ -697,9 +700,6 @@ def webhooks():
 
     elif query_result.get("intent").get("displayName") == "JobPlacement":
         fulfillmentText = job_placement_scraping(URL_RESOURCES)
-
-    elif query_result.get("intent").get("displayName") == "CDI":
-        fulfillmentText = cie_scraping(URL_CIE, "QUANDO")
 
     # if fulfillmentText == "":
     #    fulfillmentText = "Ho ancora tanto da imparare, puoi ripetere?"
