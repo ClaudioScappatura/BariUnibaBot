@@ -62,6 +62,8 @@ def cie_scraping(url, text, context):
         # flag per la gestione delle stampe
         printText = False
         match text:
+            case "DONAZIONE":
+                text = "POSSIBILITÀ DI ESPRIMERSI SULLA DONAZIONE DI ORGANI E TESSUTI"
             case "PROCEDURA":
                 text = "PROCEDURA DI RILASCIO"
             case "QUANDO":
@@ -70,87 +72,103 @@ def cie_scraping(url, text, context):
                 text = "CHI PUO’ RICHIEDERE LA CIE"
             case "CARATTERISTICHE":
                 text = "CARATTERISTICHE DEL DOCUMENTO"
+            case "COSTI":
+                text = "EMISSIONE|ESENZIONE"
+            case "PAGAMENTO":
+                text = "MODALITA' DI PAGAMENTO"
+            case "COMUNITARI":
+                text = "CITTADINI NON COMUNITARI"
+            case "INFO":
+                text = "INFO"
     elif context is not None:
         match context:
-            case "CDI_COME":
+            case "CIE_COME":
                 context = "accordion_come_5469203"
-            case "CDI_COSTI":
+            case "CIE_COSTI":
                 context = "accordion_costi_5469203"
-            case "CDI_TEMPI":
+            case "CIE_TEMPI":
                 context = "accordion_tempi_5469203"
-            case "CDI_DOVE":
+            case "CIE_DOVE":
                 context = "accordion_dove_5469203"
-            case "CDI_INFO":
+            case "CIE_INFO":
                 context = "accordion_descrizione_servizio_5469203"
     else:
-        printText = True
+        printText = False
 
-    Cie_Soup = soup.findAll('div', class_="accordion-body collapse in")
-    # se la variabile text è vuota, stampa tutte le info riguardo la CDI, altrimenti
-    # ricerca tutti i DIV di quella classe
-    for i in Cie_Soup:
-        if context is not None:
-            if i["id"] == context:
-                printText = True
-            else:
-                printText = False
-        try:
-            # analizza il primo figlio di ogni DIV trovato (il primo figlio sarà un altro DIV
-            for t in i.children:
-                try:
-                    # è la lista dei figli del secondo DIV
-                    for k in t.children:
-                        if k.name is not None:
-                            # verifica sul numero di figli
-                            has_child = len(k.findAll()) != 0
-                            # se il tag ha figli allora cerca e stampa i figli
-                            if has_child:
-                                # è la lista di figli di ogni TAG all'interno di DIV
-                                for z in k.children:
-                                    if z.name is not None:
-                                        # se è una scritta in stampatello senza tag che la precedono allora la stampo, la tolgo dal tag superiore, stampo il testo del tag padre e vado a capo
-                                        if z.text.isupper() and len(z.findPreviousSiblings()) == 0:
-                                            if context is None:
-                                                if text is not None:
-                                                    if text in z.text:
-                                                        printText = True
+    if text != "INFO":
+        Cie_Soup = soup.findAll('div', class_="accordion-body collapse in")
+        # se la variabile text è vuota, stampa tutte le info riguardo la CDI, altrimenti
+        # ricerca tutti i DIV di quella classe
+        for i in Cie_Soup:
+            if context is not None:
+                if i["id"] == context:
+                    printText = True
+                else:
+                    printText = False
+            try:
+                # analizza il primo figlio di ogni DIV trovato (il primo figlio sarà un altro DIV
+                for t in i.children:
+                    try:
+                        # è la lista dei figli del secondo DIV
+                        for k in t.children:
+                            if k.name is not None:
+                                # verifica sul numero di figli
+                                has_child = len(k.findAll()) != 0
+                                # se il tag ha figli allora cerca e stampa i figli
+                                if has_child:
+                                    # è la lista di figli di ogni TAG all'interno di DIV
+                                    for z in k.children:
+                                        if z.name is not None:
+                                            # se è una scritta in stampatello senza tag che la precedono allora la stampo, la tolgo dal tag superiore, stampo il testo del tag padre e vado a capo
+                                            if z.text.isupper() and len(z.findPreviousSiblings()) == 0:
+                                                if context is None:
+                                                    if text is not None:
+                                                        if re.match(text, z.text):
+                                                            printText = True
+                                                        else:
+                                                            printText = False
                                                     else:
-                                                        printText = False
-                                                else:
-                                                    printText = True
-                                            if printText is True:
-                                                fulfillmentText += "\n"
+                                                        printText = True
+                                                if printText is True:
+                                                    fulfillmentText += "\n"
+                                                    fulfillmentText += z.text
+                                                    fulfillmentText += "\n"
+                                                    fulfillmentText += k.text.replace(str(z.text), "")
+                                                    fulfillmentText += "\n"
+                                                    break  # esco per evitare duplicati
+
+                                            # se il tag è 'li' (elenco puntato), allora metti un a capo
+                                            elif z.name == "li" and printText is True:
+                                                fulfillmentText += "- "
                                                 fulfillmentText += z.text
                                                 fulfillmentText += "\n"
-                                                fulfillmentText += k.text.replace(str(z.text), "")
-                                                fulfillmentText += "\n"
-                                                break  # esco per evitare duplicati
-
-                                        # se il tag è 'li' (elenco puntato), allora metti un a capo
-                                        elif z.name == "li" and printText is True:
-                                            fulfillmentText += "- "
-                                            fulfillmentText += z.text
-                                            fulfillmentText += "\n"
-                                        # se il tag non ha fratelli precedenti e successivi, allora stampa prima il testo del padre e poi il proprio (ESCLUSIONE DUPLICATI)
-                                        elif len(z.findPreviousSiblings()) == 0 and len(z.findNextSiblings()) == 0:
-                                            if printText is True:
-                                                fulfillmentText += k.text.replace(str(z.text), "")
-                                                fulfillmentText += z.text
-                                        else:
-                                            if printText is True:
-                                                fulfillmentText += z.text
-                                                break  # evita duplicati
+                                            # se il tag non ha fratelli precedenti e successivi, allora stampa prima il testo del padre e poi il proprio (ESCLUSIONE DUPLICATI)
+                                            elif len(z.findPreviousSiblings()) == 0 and len(z.findNextSiblings()) == 0:
+                                                if printText is True:
+                                                    fulfillmentText += k.text.replace(str(z.text), "")
+                                                    fulfillmentText += z.text
+                                            else:
+                                                if printText is True:
+                                                    fulfillmentText += z.text
+                                                    break  # evita duplicati
 
 
-                            # se il tag non ha figli, stampa il suo testo
-                            else:
-                                if printText is True:
-                                    fulfillmentText += k.text
-                                    fulfillmentText += "\n"
-                except:
-                    continue
-        except:
-            continue
+                                # se il tag non ha figli, stampa il suo testo
+                                else:
+                                    if printText is True:
+                                        fulfillmentText += k.text
+                                        fulfillmentText += "\n"
+                    except:
+                        continue
+            except:
+                continue
+    else:
+        fulfillmentText = "Nello specifico cosa ti interessa sapere riguardo la CIE (carta di identità " \
+                          "elettronica)?:\n - Chi può richiedere la CIE\n - Quando poter richiedere la CIE\n - Come " \
+                          "richiedere la CIE (procedimento)\n - Documenti necessari a richiedere la CIE\n - " \
+                          "Richiedere un duplicato della CIE\n - CIE per cittadini NON comunitari\n - Validità della " \
+                          "CIE per l'espartrio\n - Info su PIN e PUK\n - Esperimersi sulla donazione degli organi\n - " \
+                          "Portale CIE\n "
 
         # STAMPA SEZIONE ORARI
         # NON FUNZIONA PERCHE PRENDE DATI DA UN DOCUMENTO/DATABASE
@@ -215,8 +233,33 @@ def webhooks():
         else:
             fulfillmentText = dib_location_scraping(URL_DIB_LOCATION)
 
-    elif query_result.get("intent").get("displayName") == "InfoCIE":
-        fulfillmentText = cie_scraping(URL_CIE, None, "CDI_INFO")
+    elif query_result.get("intent").get("displayName") == "CIE_INFO":
+        fulfillmentText = cie_scraping(URL_CIE, "INFO", None)
+    elif query_result.get("intent").get("displayName") == "CIE1_CHI_RICHIEDERE":
+        fulfillmentText = cie_scraping(URL_CIE, "CHI", None)
+    elif query_result.get("intent").get("displayName") == "CIE1_QUANDO_RICHIEDERE":
+        fulfillmentText = cie_scraping(URL_CIE, "QUANDO", None)
+    elif query_result.get("intent").get("displayName") == "CIE2_DOCUMENTI":
+        fulfillmentText = cie_scraping(URL_CIE, "DOCUMENTI", None)
+    elif query_result.get("intent").get("displayName") == "CIE2_DUPLICATO":
+        fulfillmentText = cie_scraping(URL_CIE, "DUPLICATO", None)
+    elif query_result.get("intent").get("displayName") == "CIE2_ESPATRIO":
+        fulfillmentText = cie_scraping(URL_CIE, "ESPATRIO", None)
+    elif query_result.get("intent").get("displayName") == "CIE2_PIN":
+        fulfillmentText = cie_scraping(URL_CIE, "PIN/PUK", None)
+    elif query_result.get("intent").get("displayName") == "CIE2_ORGANI":
+        fulfillmentText = cie_scraping(URL_CIE, "DONAZIONE", None)
+    elif query_result.get("intent").get("displayName") == "CIE2_NON_COMUNITARI":
+        fulfillmentText = cie_scraping(URL_CIE, "COMUNITARI", None)
+    elif query_result.get("intent").get("displayName") == "CIE2_PROCESSO":
+        fulfillmentText = cie_scraping(URL_CIE, None, "CIE_COME")
+    elif query_result.get("intent").get("displayName") == "CIE_TEMPI":
+        fulfillmentText = cie_scraping(URL_CIE, None, "CIE_TEMPI")
+    elif query_result.get("intent").get("displayName") == "CIE_COSTI":
+        fulfillmentText = cie_scraping(URL_CIE, "COSTI", None)
+    elif query_result.get("intent").get("displayName") == "CIE_PAGAMENTO":
+        fulfillmentText = cie_scraping(URL_CIE, "PAGAMENTO", None)
+
 
     # if fulfillmentText == "":
     #    fulfillmentText = "Ho ancora tanto da imparare, puoi ripetere?"
