@@ -57,6 +57,7 @@ def cie_scraping(url, text, context):
         match context:
             case "CIE_COME":
                 context = "accordion_come_5469203"
+                text = "DOCUMENTI DA ALLEGARE|CITTADINI NON COMUNITARI|PIN/PUK|PORTALE CIE"
             case "CIE_COSTI":
                 context = "accordion_costi_5469203"
             case "CIE_TEMPI":
@@ -94,7 +95,7 @@ def cie_scraping(url, text, context):
                                         if z.name is not None:
                                             # se è una scritta in stampatello senza tag che la precedono allora la stampo, la tolgo dal tag superiore, stampo il testo del tag padre e vado a capo
                                             if z.text.isupper() and len(z.findPreviousSiblings()) == 0:
-                                                if context is None:
+                                                if context is None or context == "accordion_come_5469203":
                                                     if text is not None:
                                                         if re.match(text, z.text):
                                                             printText = True
@@ -533,4 +534,4 @@ def CDR_scraping(url, text, context):
 
 
 # print(cie_scraping(URL_CIE, None, "CDI_DOVE"))
-print(cie_scraping(URL_CIE, "ESPATRIO", None))
+print(cie_scraping(URL_CIE, None, "CIE_COME"))
