@@ -216,7 +216,7 @@ def webhooks():
             fulfillmentText = dib_location_scraping(URL_DIB_LOCATION)
 
     elif query_result.get("intent").get("displayName") == "InfoCIE":
-        fulfillmentText = cie_scraping(URL_CIE, None, "CDI_COSA")
+        fulfillmentText = cie_scraping(URL_CIE, None, "CDI_INFO")
 
     # if fulfillmentText == "":
     #    fulfillmentText = "Ho ancora tanto da imparare, puoi ripetere?"
