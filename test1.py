@@ -510,4 +510,4 @@ def CDR_scraping(url, text, context):
 
 
 # print(cie_scraping(URL_CIE, None, "CDI_DOVE"))
-print(cie_scraping(URL_CIE, None, None))
+print(cie_scraping(URL_CIE, None, "CDI_COME"))

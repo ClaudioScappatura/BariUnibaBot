@@ -7,8 +7,6 @@ from flask import Flask, request
 
 app = Flask(__name__)
 
-# lunghezza di nome e cognome di prof e collaboratori previsti
-NAME_LEN = 3
 # intent ricerca personale:
 # url professori
 URL_PROF = "https://www.uniba.it/ricerca/dipartimenti/informatica/dipartimento/personale/docenti-2"
@@ -218,7 +216,7 @@ def webhooks():
             fulfillmentText = dib_location_scraping(URL_DIB_LOCATION)
 
     elif query_result.get("intent").get("displayName") == "InfoCIE":
-        fulfillmentText = cie_scraping(URL_CIE, None, None)
+        fulfillmentText = cie_scraping(URL_CIE, None, "CDI_COSA")
 
     # if fulfillmentText == "":
     #    fulfillmentText = "Ho ancora tanto da imparare, puoi ripetere?"
