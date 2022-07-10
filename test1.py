@@ -49,6 +49,8 @@ def cie_scraping(url, text, context):
                 text = "MODALITA' DI PAGAMENTO"
             case "COMUNITARI":
                 text = "CITTADINI NON COMUNITARI"
+            case "ESPATRIO":
+                text = "VALIDITA’ PER L’ESPATRIO"
             case "INFO":
                 text = "INFO"
     elif context is not None:
@@ -138,7 +140,7 @@ def cie_scraping(url, text, context):
                           "elettronica)?:\n - Chi può richiedere la CIE\n - Quando poter richiedere la CIE\n - Come " \
                           "richiedere la CIE (procedimento)\n - Documenti necessari a richiedere la CIE\n - " \
                           "Richiedere un duplicato della CIE\n - CIE per cittadini NON comunitari\n - Validità della " \
-                          "CIE per l'espartrio\n - Info su PIN e PUK\n - Esperimersi sulla donazione degli organi\n - " \
+                          "CIE per l'espatrio\n - Info su PIN e PUK\n - Esperimersi sulla donazione degli organi\n - " \
                           "Portale CIE\n "
 
         # STAMPA SEZIONE ORARI
@@ -531,4 +533,4 @@ def CDR_scraping(url, text, context):
 
 
 # print(cie_scraping(URL_CIE, None, "CDI_DOVE"))
-print(cie_scraping(URL_CIE, "COSTI", None))
+print(cie_scraping(URL_CIE, "ESPATRIO", None))

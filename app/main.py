@@ -78,6 +78,8 @@ def cie_scraping(url, text, context):
                 text = "MODALITA' DI PAGAMENTO"
             case "COMUNITARI":
                 text = "CITTADINI NON COMUNITARI"
+            case "ESPATRIO":
+                text = "VALIDITA’ PER L’ESPATRIO"
             case "INFO":
                 text = "INFO"
     elif context is not None:
@@ -139,6 +141,7 @@ def cie_scraping(url, text, context):
 
                                             # se il tag è 'li' (elenco puntato), allora metti un a capo
                                             elif z.name == "li" and printText is True:
+                                                fulfillmentText += "\n"
                                                 fulfillmentText += "- "
                                                 fulfillmentText += z.text
                                                 fulfillmentText += "\n"
@@ -168,7 +171,7 @@ def cie_scraping(url, text, context):
                           "richiedere la CIE (procedimento)\n - Documenti necessari a richiedere la CIE\n - " \
                           "Richiedere un duplicato della CIE\n - CIE per cittadini NON comunitari\n - Validità della " \
                           "CIE per l'espartrio\n - Info su PIN e PUK\n - Esperimersi sulla donazione degli organi\n - " \
-                          "Portale CIE\n "
+                          "Portale CIE\n - Tempi di arrivo/Durata CIE"
 
         # STAMPA SEZIONE ORARI
         # NON FUNZIONA PERCHE PRENDE DATI DA UN DOCUMENTO/DATABASE
