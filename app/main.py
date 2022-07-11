@@ -505,7 +505,7 @@ def webhooks():
         fulfillmentText = cie_scraping(URL_CIE, "PIN/PUK", None)
     elif query_result.get("intent").get("displayName") == "CIE_ORGANI":
         fulfillmentText = cie_scraping(URL_CIE, "DONAZIONE", None)
-    elif query_result.get("intent").get("displayName") == "CIE2_NON_COMUNITARI":
+    elif query_result.get("intent").get("displayName") == "CIE_NON_COMUNITARI":
         fulfillmentText = cie_scraping(URL_CIE, "COMUNITARI", None)
     elif query_result.get("intent").get("displayName") == "CIE_PROCESSO":
         fulfillmentText = cie_scraping(URL_CIE, None, "CIE_COME")
@@ -513,6 +513,8 @@ def webhooks():
         fulfillmentText = cie_scraping(URL_CIE, None, "CIE_TEMPI")
     elif query_result.get("intent").get("displayName") == "CIE_COSTI":
         fulfillmentText = cie_scraping(URL_CIE, "COSTI", None)
+    elif query_result.get("intent").get("displayName") == "CIE_PORTALE":
+        fulfillmentText = cie_scraping(URL_CIE, "PORTALE CIE", None)
     elif query_result.get("intent").get("displayName") == "CIE_PAGAMENTO":
         fulfillmentText = cie_scraping(URL_CIE, "PAGAMENTO", None)
 

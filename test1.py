@@ -639,9 +639,9 @@ def CR_replace(fulfillmentText):
     fulfillmentText = match1.group(0)
     return fulfillmentText
 
-print(TARI_scraping(URL_TARI,None,"TARI_DOVE"))
+#print(TARI_scraping(URL_TARI,None,"TARI_DOVE"))
 # print(CR_scraping(URL_CR, None, "CR_COME"))
 # print(cie_scraping(URL_CIE, None, "CIE_TEMPI"))
 
-# print(cie_scraping(URL_CIE, None, "CDI_DOVE"))
+print(cie_scraping(URL_CIE, "PORTALE CIE", None))
 # print(cie_scraping(URL_CIE, "UFFICIO ANAGRAFE SAN PASQUALE", None))
