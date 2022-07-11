@@ -17,6 +17,9 @@ URL_TARI = "https://www.comune.bari.it/web/egov/-/dichiarazione-tari"
 # URL certificato di residenza
 URL_CDR = "https://www.comune.bari.it/web/egov/-/certificato-di-residenza"
 
+# URL notizie
+URL_NEWS = "https://www.comune.bari.it/web/guest/home"
+
 
 def parsing_html(url):
     response = requests.get(url=url)
@@ -465,7 +468,7 @@ def CDR_scraping(url, text, context):
         match context:
             case "CDR_COSA":
                 # COSA del certificato di residenza
-                context = "accordion_descrizione_servizio_SCHEDA_SERVIZIO_IMPORTED_8868"
+                stamp = "È il certificato che attesta l’iscrizione nell’Anagrafe della Popolazione del Comune di Bari.\nQuesto certificato può essere sostituito da una dichiarazione sostitutiva di certificazione o autocertificazione al link:\n - https://www.comune.bari.it/documents/25813/2500240/Dichiarazione+sostitutiva+di+certificazione+multipla.pdf/d9e5020e-d1b7-4acf-985e-f65d736441c3\n"
             case "CDR_COME":
                 # COME del certificato di residenza
                 context = "accordion_come_SCHEDA_SERVIZIO_IMPORTED_8868"
@@ -562,7 +565,7 @@ def CDR_scraping(url, text, context):
         # stampa tutti i dati inerenti ai moduli per certificato di residenza
         CDR_Soup = soup.findAll('a', class_="inverted-link")
         for links in CDR_Soup:
-            print(links.text + ": \n - " + "https://www.comune.bari.it" + links["href"] + "\n")
+            fulfillmentText += ("\n" + links.text + ": \n - " + "https://www.comune.bari.it" + links["href"] + "\n")
 
     # formattazione testo in eccesso
     fulfillmentText = re.sub("   MODALITA’ DI PAGAMENTO    Il pagamento", "\n\nMODALITA’ DI PAGAMENTO\nIl pagamento",
@@ -602,8 +605,16 @@ def CDR_scraping(url, text, context):
                           "che pec)\n\nOrari di apertura al pubblico :\n Lunedì : 9.00 - 12.00\n Martedì : 9.00 - " \
                           "12.00\n Mercoledì : 9.00 - 12.00\n Giovedì : 9.00 - 12.00 e 15.30 - 17.00\n Venerdì : 9.00 - " \
                           "12.00\n Sabato : chiuso\n\nIndirizzo : Corso Vittorio Veneto,4 70122 Bari "
+    if context == "CDR_COSA":
+        fulfillmentText = stamp
+
+    if context == "CDR_INFO":
+        fulfillmentText = "Cosa vuoi sapere sul certificato di residenza (C.R.)?\n - Cos'è il certificato di residenza\n - Come richiedere il C.R.\n - Richiedere il C.R. in edicola\n - Validita del C.R.\n - Posizione/orari uffici per il C.R.\n - Costi del C.R.\n - Casi di esenzione C.R.\n - Modalità di pagamento C.R.\n - Tempi di rilascio C.R.\n - Moduli per richiesta C.R.\n"
 
     return fulfillmentText
+
+
+print(CDR_scraping(URL_CDR, None, "CDR_INFO"))
 
 
 def CR_replace(fulfillmentText):
@@ -640,7 +651,18 @@ def CR_replace(fulfillmentText):
     return fulfillmentText
 
 
-print(CR_scraping(URL_CR, None, "CR_DOVE"))
+def NEWS_scraping(url):  # funziona
+    fulfillmentText = ""
+    soup = parsing_html(url)
+    notices = soup.findAll('div', class_="notizia padding10")
+    for news1 in notices:
+        print(news1.a["title"])
+        print(news1.a.text)
+        print(news1.a["href"])
+        print("\n")
+
+# NEWS_scraping(URL_NEWS)
+# print(CDR_scraping(URL_CDR, None, "CDR_COSA"))
 # print(cie_scraping(URL_CIE, None, "CIE_TEMPI"))
 
 # print(cie_scraping(URL_CIE, "PORTALE CIE", None))

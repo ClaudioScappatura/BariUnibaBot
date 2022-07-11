@@ -16,6 +16,9 @@ URL_CR = "https://www.comune.bari.it/web/egov/-/cambio-di-residenza-con-provenie
 # URL Tari
 URL_TARI = "https://www.comune.bari.it/web/egov/-/dichiarazione-tari"
 
+# URL certificato di residenza
+URL_CDR = "https://www.comune.bari.it/web/egov/-/certificato-di-residenza"
+
 
 def parsing_html(url):
     response = requests.get(url=url)
@@ -426,8 +429,8 @@ def CR_scraping(url, text, context):
     if context == "accordion_dove_11639056":
         fulfillmentText = "UFFICIO ANAGRAFE CENTRALE - DICHIARAZIONI DI RESIDENZA E CAMBI DI DOMICILIO\n\nNumero " \
                           "di telefono:\n080/5773332 - 3333 - 3355 - 3376 - 3344 - 3314 - 3729 - 6450 - 2489 - " \
-                          "4636 - 4606\nNumero di fax:\n080/5773359\nNumero di Email " \
-                          "PEC:\nanagrafe.comunebari@pec.rupar.puglia.it\nPosta elettronica " \
+                          "4636 - 4606\n\nNumero di fax:\n080/5773359\n\nNumero di Email " \
+                          "PEC:\nanagrafe.comunebari@pec.rupar.puglia.it\n\nPosta elettronica " \
                           ":\nufficio.dichiarazioniresidenza@comune.bari.it\n\nIndirizzo : Corso Vittorio Veneto," \
                           "4 70122 Bari "
 
@@ -477,6 +480,176 @@ def CR_replace(fulfillmentText):
                        "TRASFERIMENTO DI NUCLEO)",
                        fulfillmentText, re.IGNORECASE)
     fulfillmentText = match1.group(0)
+    return fulfillmentText
+
+# scraping sulle info inerenti al certificato di residenza
+def CDR_scraping(url, text, context):
+    fulfillmentText = ""
+    soup = parsing_html(url)
+    printText = False
+    pagamento = False
+    # flag utile per la gestione degli allegati
+    allegati = False
+    if text is not None:
+        # flag per la gestione delle stampe
+        printText = False
+        match text:
+            case "VALIDITA":
+                text = "VALIDITA"
+            case "EDICOLA":
+                text = "CERTIFICATI IN EDICOLA"
+            case "ESENZIONE":
+                text = "CASI DI ESENZIONE"
+            case "PAGAMENTO":
+                text = None
+                pagamento = True
+    elif context is not None:
+        match context:
+            case "CDR_COSA":
+                # COSA del certificato di residenza
+                stamp = "È il certificato che attesta l’iscrizione nell’Anagrafe della Popolazione del Comune di Bari.\nQuesto certificato può essere sostituito da una dichiarazione sostitutiva di certificazione o autocertificazione al link:\n - https://www.comune.bari.it/documents/25813/2500240/Dichiarazione+sostitutiva+di+certificazione+multipla.pdf/d9e5020e-d1b7-4acf-985e-f65d736441c3\n"
+            case "CDR_COME":
+                # COME del certificato di residenza
+                context = "accordion_come_SCHEDA_SERVIZIO_IMPORTED_8868"
+            case "CDR_DOVE":
+                # DOVE del certificato di residenza
+                context = "accordion_dove_SCHEDA_SERVIZIO_IMPORTED_8868"
+            case "CDR_COSTI":
+                # COSTI certificato di resistenza
+                context = "accordion_costi_SCHEDA_SERVIZIO_IMPORTED_8868"
+            case "CDR_TEMPI":  # da implementare poiche dinamico
+                # TEMPI del certificato di residenza
+                context = "accordion_tempi_SCHEDA_SERVIZIO_IMPORTED_8868"
+            case "CDR_ALLEGATI":
+                allegati = True
+    else:  # se text e context sono nulli, stampa tutte le informazioni in pagina
+        printText = True
+
+    if allegati is False:
+        CDR_Soup = soup.findAll('div', class_="accordion-body collapse in")
+        # se la variabile text è vuota, stampa tutte le info riguardo la CDI, altrimenti
+        # ricerca tutti i DIV di quella classe
+        for i in CDR_Soup:
+            if context is not None:
+                if i["id"] == context:
+                    printText = True
+                else:
+                    printText = False
+            try:
+                # analizza il primo figlio di ogni DIV trovato (il primo figlio sarà un altro DIV
+                for t in i.children:
+                    try:
+                        # è la lista dei figli del secondo DIV
+                        for k in t.children:
+
+                            if k.name is not None:
+                                # verifica sul numero di figli
+                                has_child = len(k.findAll()) != 0
+                                # se il tag ha figli allora cerca e stampa i figli
+                                if has_child:
+                                    # è la lista di figli di ogni TAG all'interno di DIV
+                                    for z in k.children:
+                                        if z.name is not None:
+                                            # se è una scritta in stampatello senza tag che la precedono allora la stampo, la tolgo dal tag superiore, stampo il testo del tag padre e vado a capo
+                                            if z.text.isupper() and len(
+                                                    z.findPreviousSiblings()) == 0 and z.text != "N.B.":
+                                                if context is None:
+                                                    if text is not None:
+                                                        if text in z.text:
+                                                            printText = True
+                                                        else:
+                                                            printText = False
+                                                    else:
+                                                        printText = True
+                                                if printText is True:
+                                                    fulfillmentText += "\n"
+                                                    fulfillmentText += z.text
+                                                    # se il titolo in maiuscolo contiene fratelli all'interno dello stesso TAG, allora mette uno spazio per andare a capo
+                                                    if len(z.findNextSiblings()) != 0:
+                                                        fulfillmentText += "\n"
+                                                    fulfillmentText += k.text.replace(str(z.text), "")
+                                                    fulfillmentText += "\n"
+                                                    break  # esco per evitare duplicati
+
+                                            elif z.name == "table" and printText is True:
+                                                fulfillmentText += "ATTENZIONE: Per visualizzare la tabella riguardo le esenzioni, visita: " + URL_CDR + "\n"
+                                            # se il tag è 'li' (elenco puntato), allora metti un a capo
+                                            elif z.name == "li" and printText is True:
+                                                fulfillmentText += "- "
+                                                fulfillmentText += z.text
+                                                fulfillmentText += "\n"
+                                            # se il tag non ha fratelli precedenti e successivi, allora stampa prima il testo del padre e poi il proprio (ESCLUSIONE DUPLICATI)
+                                            elif len(z.findPreviousSiblings()) == 0 and len(z.findNextSiblings()) == 0:
+                                                if printText is True:
+                                                    fulfillmentText += k.text.replace(str(z.text), "")
+                                                    fulfillmentText += z.text
+                                                    fulfillmentText += "\n"
+                                            else:  # se il tag ha più figli che però non rientrano in uno dei casi particolari precedenti, allora stampa il padre
+                                                if printText is True:
+                                                    fulfillmentText += k.text
+                                                    fulfillmentText += "\n"
+                                                    break  # evita duplicati
+
+
+                                # se il tag non ha figli, stampa il suo testo
+                                else:
+                                    if printText is True:
+                                        fulfillmentText += k.text
+                                        fulfillmentText += "\n"
+                    except:
+                        continue
+            except:
+                continue
+    else:
+        # stampa tutti i dati inerenti ai moduli per certificato di residenza
+        CDR_Soup = soup.findAll('a', class_="inverted-link")
+        for links in CDR_Soup:
+            fulfillmentText += ("\n" + links.text + ": \n - " + "https://www.comune.bari.it" + links["href"] + "\n")
+
+    # formattazione testo in eccesso
+    fulfillmentText = re.sub("   MODALITA’ DI PAGAMENTO    Il pagamento", "\n\nMODALITA’ DI PAGAMENTO\nIl pagamento",
+                             fulfillmentText)
+    fulfillmentText = re.sub("1. Attraverso i Servizi PagoPA", "\n\n1. Attraverso i Servizi PagoPA\n", fulfillmentText)
+    fulfillmentText = re.sub("Certificati rilasciati con bollo    Inserire i",
+                             "\n   - Certificati rilasciati con bollo\n\nInserire i", fulfillmentText)
+    fulfillmentText = re.sub(" Al termine della procedura sarà possibile pagare:",
+                             "\n Al termine della procedura sarà possibile pagare:\n   -", fulfillmentText)
+    fulfillmentText = re.sub("oppure", "\n  oppure\n   -", fulfillmentText)
+    fulfillmentText = re.sub("STAMPA.    In entrambi i casi", "STAMPA.\n\n In entrambi i casi", fulfillmentText)
+    fulfillmentText = re.sub("2. Direttamente presso", "\n\n2. Direttamente presso", fulfillmentText)
+    if text == "CASI DI ESENZIONE":
+        fulfillmentText = "CASI DI ESENZIONE\nIn caso di esenzione, spetta al soggetto richiedente dichiarare il " \
+                          "relativo uso ed indicare la norma di riferimento che dispone il diritto di esenzione, " \
+                          "in quanto l’esenzione non può essere presunta dall’operatore del servizio anagrafico.\nDi " \
+                          "seguito, si riportano alcuni dei principali casi di esenzione, relativi ai certificati " \
+                          "anagrafici, previsti dalle norme vigenti:\n\nATTENZIONE: Per visualizzare la tabella " \
+                          "riguardo le esenzioni, visita: " \
+                          "https://www.comune.bari.it/web/egov/-/certificato-di-residenza\n\nNOTA BENE: l’utilizzo di " \
+                          "certificati rilasciati in esenzione da bolli, per fini diversi da quelli indicati sul " \
+                          "certificato, equivale a evasione fiscale e comporta la responsabilità del richiedente, " \
+                          "consistente nel pagamento dell’imposta e delle relative sanzioni previste dalle legge. "
+
+    if context == "accordion_come_SCHEDA_SERVIZIO_IMPORTED_8868":
+        fulfillmentText = re.sub("(?s)NOTA BENE:.*?da presentare ad altre Pubbliche Amministrazioni.", "",
+                                 fulfillmentText)
+
+    if pagamento:
+        match1 = re.search("(?s)MODALITA’ DI PAGAMENTO.*?dell'anagrafe con il POS", fulfillmentText)
+        fulfillmentText = match1.group(0)
+
+    if context == "accordion_dove_SCHEDA_SERVIZIO_IMPORTED_8868":
+        fulfillmentText = "UFFICIO ANAGRAFE CENTRALE\n\nNumero di telefono :\n 080/5773387 080/5773392\n (chiamare " \
+                          "dal lunedì al venerdì ore 8.30/ 9.00 e 13.00/13.45)\n\nNumero di Email PEC :\n " \
+                          "anagrafe.comunebari@pec.rupar.puglia.it \n (tale indirizzo è abilitato a ricevere sia email " \
+                          "che pec)\n\nOrari di apertura al pubblico :\n Lunedì : 9.00 - 12.00\n Martedì : 9.00 - " \
+                          "12.00\n Mercoledì : 9.00 - 12.00\n Giovedì : 9.00 - 12.00 e 15.30 - 17.00\n Venerdì : 9.00 - " \
+                          "12.00\n Sabato : chiuso\n\nIndirizzo : Corso Vittorio Veneto,4 70122 Bari "
+    if context == "CDR_COSA":
+        fulfillmentText = stamp
+
+    if context == "CDR_INFO":
+        fulfillmentText = "Cosa vuoi sapere sul certificato di residenza (C.R.)?\n - Cos'è il certificato di residenza\n - Come richiedere il C.R.\n - Richiedere il C.R. in edicola\n - Validita del C.R.\n - Posizione/orari uffici per il C.R.\n - Costi del C.R.\n - Casi di esenzione C.R.\n - Modalità di pagamento C.R.\n - Tempi di rilascio C.R.\n - Moduli per richiesta C.R.\n"
+
     return fulfillmentText
 
 
@@ -557,6 +730,29 @@ def webhooks():
         fulfillmentText = TARI_scraping(URL_TARI, "DOCUMENTI", None)
     elif query_result.get("intent").get("displayName") == "TARI_DOVE":
         fulfillmentText = TARI_scraping(URL_TARI, None, "TARI_DOVE")
+
+    # intent certificato di residenza
+    elif query_result.get("intent").get("displayName") == "CDR_INFO":
+        fulfillmentText = CDR_scraping(URL_CDR, None, "CDR_INFO")
+    elif query_result.get("intent").get("displayName") == "CDR_COME":
+        fulfillmentText = CDR_scraping(URL_CDR, None, "CDR_COME")
+    elif query_result.get("intent").get("displayName") == "CDR_COSA":
+        fulfillmentText = CDR_scraping(URL_CDR, None, "CDR_COSA")
+    elif query_result.get("intent").get("displayName") == "CDR_DOVE":
+        fulfillmentText = CDR_scraping(URL_CDR, None, "CDR_DOVE")
+    elif query_result.get("intent").get("displayName") == "CDR_COSTI":
+        fulfillmentText = CDR_scraping(URL_CDR, None, "CDR_COSTI")
+    elif query_result.get("intent").get("displayName") == "CDR_TEMPI":
+        fulfillmentText = CDR_scraping(URL_CDR, None, "CDR_TEMPI")
+    elif query_result.get("intent").get("displayName") == "CDR_ALLEGATI":
+        fulfillmentText = CDR_scraping(URL_CDR, None, "CDR_ALLEGATI")
+    elif query_result.get("intent").get("displayName") == "CDR_VALIDITA":
+        fulfillmentText = CDR_scraping(URL_CDR, "VALIDITA", None)
+    elif query_result.get("intent").get("displayName") == "CDR_EDICOLA":
+        fulfillmentText = CDR_scraping(URL_CDR, "EDICOLA", None)
+    elif query_result.get("intent").get("displayName") == "CDR_ESENZIONE":
+        fulfillmentText = CDR_scraping(URL_CDR, "PAGAMENTO", None)
+
 
     # if fulfillmentText == "":
     #    fulfillmentText = "Ho ancora tanto da imparare, puoi ripetere?"
