@@ -302,6 +302,7 @@ def TARI_scraping(url, text, context):
 
     return fulfillmentText
 
+
 # scraping sulle info inerenti al cambio di residenza
 def CR_scraping(url, text, context):
     fulfillmentText = ""
@@ -423,13 +424,12 @@ def CR_scraping(url, text, context):
             fulfillmentText += ("\n" + links.text + ": \n - " + "https://www.comune.bari.it" + links["href"] + "\n")
 
     if context == "accordion_dove_11639056":
-        if text == "UFFICIO ANAGRAFE CENTRALE":
-            fulfillmentText = "UFFICIO ANAGRAFE CENTRALE - DICHIARAZIONI DI RESIDENZA E CAMBI DI DOMICILIO\n\nNumero " \
-                              "di telefono:\n080/5773332 - 3333 - 3355 - 3376 - 3344 - 3314 - 3729 - 6450 - 2489 - " \
-                              "4636 - 4606\nNumero di fax:\n080/5773359\nNumero di Email " \
-                              "PEC:\nanagrafe.comunebari@pec.rupar.puglia.it\nPosta elettronica " \
-                              ":\nufficio.dichiarazioniresidenza@comune.bari.it\n\nIndirizzo : Corso Vittorio Veneto," \
-                              "4 70122 Bari "
+        fulfillmentText = "UFFICIO ANAGRAFE CENTRALE - DICHIARAZIONI DI RESIDENZA E CAMBI DI DOMICILIO\n\nNumero " \
+                          "di telefono:\n080/5773332 - 3333 - 3355 - 3376 - 3344 - 3314 - 3729 - 6450 - 2489 - " \
+                          "4636 - 4606\nNumero di fax:\n080/5773359\nNumero di Email " \
+                          "PEC:\nanagrafe.comunebari@pec.rupar.puglia.it\nPosta elettronica " \
+                          ":\nufficio.dichiarazioniresidenza@comune.bari.it\n\nIndirizzo : Corso Vittorio Veneto," \
+                          "4 70122 Bari "
 
     if context == "accordion_come_11639056":
         fulfillmentText = CR_replace(fulfillmentText)
