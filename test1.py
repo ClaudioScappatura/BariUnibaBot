@@ -294,7 +294,16 @@ def CR_scraping(url, text, context):
                               "4 70122 Bari "
 
     if context == "accordion_come_11639056":
-        match1 = re.search("(?sm)al fine di (.*?)(?=[\r\n]*\w*2\) TRASFERIMENTO DI NUCLEO)",
+        fulfillmentText = fulfillmentText.replace("1) CITTADINI STRANIERI","")
+        fulfillmentText = fulfillmentText.replace("- Il cittadino di uno Stato non appartenente all'Unione Europea "
+                                                  "deve allegare la documentazione indicata nell' allegato A) del "
+                                                  "modulo ministeriale.", "")
+        fulfillmentText = fulfillmentText.replace("- Il cittadino di uno Stato appartenente all'Unione Europea deve "
+                                                  "allegare la documentazione indicata nell' allegato B) del modulo "
+                                                  "ministeriale.","")
+
+        match1 = re.search("(?sm)le comunicazioni per il cambio di residenza/indirizzo(.*?)(?=[\r\n]*\w*2\) "
+                           "TRASFERIMENTO DI NUCLEO)",
                            fulfillmentText, re.IGNORECASE)
         fulfillmentText = match1.group(0)
 
@@ -608,7 +617,7 @@ def CDR_scraping(url, text, context):
     return fulfillmentText
 
 
-print(CR_scraping(URL_CR, None, "CR_INFO"))
+print(CR_scraping(URL_CR, None, "CR_COME"))
 # print(cie_scraping(URL_CIE, None, "CIE_TEMPI"))
 
 # print(cie_scraping(URL_CIE, None, "CDI_DOVE"))

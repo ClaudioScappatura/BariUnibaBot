@@ -285,7 +285,7 @@ def CR_scraping(url, text, context):
         fulfillmentText = ""
         CR_Soup = soup.findAll('a', class_="inverted-link")
         for links in CR_Soup:
-            fulfillmentText += ("\n"+links.text + ": \n - " + "https://www.comune.bari.it" + links["href"] + "\n")
+            fulfillmentText += ("\n" + links.text + ": \n - " + "https://www.comune.bari.it" + links["href"] + "\n")
 
     if text is not None:
         if text == "UFFICIO ANAGRAFE CENTRALE":
@@ -297,7 +297,16 @@ def CR_scraping(url, text, context):
                               "4 70122 Bari "
 
     if context == "accordion_come_11639056":
-        match1 = re.search("(?sm)al fine di (.*?)(?=[\r\n]*\w*2\) TRASFERIMENTO DI NUCLEO)",
+        fulfillmentText = fulfillmentText.replace("1) CITTADINI STRANIERI", "")
+        fulfillmentText = fulfillmentText.replace("- Il cittadino di uno Stato non appartenente all'Unione Europea "
+                                                  "deve allegare la documentazione indicata nell' allegato A) del "
+                                                  "modulo ministeriale.", "")
+        fulfillmentText = fulfillmentText.replace("- Il cittadino di uno Stato appartenente all'Unione Europea deve "
+                                                  "allegare la documentazione indicata nell' allegato B) del modulo "
+                                                  "ministeriale.", "")
+
+        match1 = re.search("(?sm)le comunicazioni per il cambio di residenza/indirizzo(.*?)(?=[\r\n]*\w*2\) "
+                           "TRASFERIMENTO DI NUCLEO)",
                            fulfillmentText, re.IGNORECASE)
         fulfillmentText = match1.group(0)
 
@@ -393,7 +402,7 @@ def webhooks():
 
     # intent del cambio di residenza (CR)
     elif query_result.get("intent").get("displayName") == "CR_INFO":
-        fulfillmentText = CR_scraping(URL_CR, "INFO", None)
+        fulfillmentText = CR_scraping(URL_CR, None, "CR_INFO")
     elif query_result.get("intent").get("displayName") == "CR_COSA":
         fulfillmentText = CR_scraping(URL_CR, None, "CR_COSA")
     elif query_result.get("intent").get("displayName") == "CR_COME":
