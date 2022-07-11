@@ -5,6 +5,7 @@ import re
 import requests
 from flask import Flask, request
 from aiogram import Bot, Dispatcher, executor, types
+
 app = Flask(__name__)
 
 # url intent carta di identità
@@ -18,6 +19,9 @@ URL_TARI = "https://www.comune.bari.it/web/egov/-/dichiarazione-tari"
 
 # URL certificato di residenza
 URL_CDR = "https://www.comune.bari.it/web/egov/-/certificato-di-residenza"
+
+# URL notizie
+URL_NEWS = "https://www.comune.bari.it/web/guest/home"
 
 
 def parsing_html(url):
@@ -482,6 +486,7 @@ def CR_replace(fulfillmentText):
     fulfillmentText = match1.group(0)
     return fulfillmentText
 
+
 # scraping sulle info inerenti al certificato di residenza
 def CDR_scraping(url, text, context):
     fulfillmentText = ""
@@ -652,6 +657,15 @@ def CDR_scraping(url, text, context):
         bot = Bot(token='5430259949:AAFWM6G3Nma71fS8SkoeVOQ-Fw_XrSaaVRQ')
         dp = Dispatcher(bot)
 
+    return fulfillmentText
+
+
+def NEWS_scraping(url):
+    fulfillmentText = "\nLE NOTIZIE:\n "
+    soup = parsing_html(url)
+    notices = soup.findAll('div', class_="notizia padding10")
+    for news1 in notices:
+        fulfillmentText += "\n" + news1.a["title"] + "\n" + news1.a["href"] + "\n"
 
     return fulfillmentText
 
@@ -660,19 +674,13 @@ def CDR_scraping(url, text, context):
 def webhooks():
     req = request.get_json(silent=True, force=True)
     fulfillmentText = ""
-    bot = Bot(token='5430259949:AAFWM6G3Nma71fS8SkoeVOQ-Fw_XrSaaVRQ')
-    dp = Dispatcher(bot)
 
-    @dp.message_handler()
-    async def echo(message: types.Message):
-        await message.reply("SONO IL BOT")
     # processo la query che arriva in JSON
     query_result = req.get('queryResult')
 
     # intent della carta di identità (CIE)
     if query_result.get("intent").get("displayName") == "CIE_INFO":
         fulfillmentText = cie_scraping(URL_CIE, "INFO", None)
-        echo
     elif query_result.get("intent").get("displayName") == "CIE_CHI_RICHIEDERE":
         fulfillmentText = cie_scraping(URL_CIE, "CHI", None)
     elif query_result.get("intent").get("displayName") == "CIE_QUANDO_RICHIEDERE":
@@ -762,7 +770,10 @@ def webhooks():
     elif query_result.get("intent").get("displayName") == "CDR_ESENZIONE":
         fulfillmentText = CDR_scraping(URL_CDR, "PAGAMENTO", None)
 
-    executor.start_polling(dp)
+    # intent news
+    elif query_result.get("intent").get("displayName") == "NEWS":
+        fulfillmentText = NEWS_scraping(URL_NEWS)
+
     # if fulfillmentText == "":
     #    fulfillmentText = "Ho ancora tanto da imparare, puoi ripetere?"
 

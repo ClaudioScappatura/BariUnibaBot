@@ -650,22 +650,13 @@ def CR_replace(fulfillmentText):
 
 
 def NEWS_scraping(url):
-    bot = Bot(token='5430259949:AAFWM6G3Nma71fS8SkoeVOQ-Fw_XrSaaVRQ')
-    dp = Dispatcher(bot)
-
-    @dp.message_handler()
-    async def reply(message: types.Message):
-        await message.reply("SONO IL BOT")
-
 
     fulfillmentText = "\nLE NOTIZIE:\n "
     soup = parsing_html(url)
     notices = soup.findAll('div', class_="notizia padding10")
     for news1 in notices:
         fulfillmentText += "\n" + news1.a["title"] + "\n" + news1.a["href"] + "\n"
-        reply()
 
-    executor.start_polling(dp)
     return fulfillmentText
 
 
