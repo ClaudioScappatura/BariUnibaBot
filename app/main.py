@@ -395,23 +395,23 @@ def webhooks():
 
     elif query_result.get("intent").get("displayName") == "CIE_INFO":
         fulfillmentText = cie_scraping(URL_CIE, "INFO", None)
-    elif query_result.get("intent").get("displayName") == "CIE1_CHI_RICHIEDERE":
+    elif query_result.get("intent").get("displayName") == "CIE_CHI_RICHIEDERE":
         fulfillmentText = cie_scraping(URL_CIE, "CHI", None)
-    elif query_result.get("intent").get("displayName") == "CIE1_QUANDO_RICHIEDERE":
+    elif query_result.get("intent").get("displayName") == "CIE_QUANDO_RICHIEDERE":
         fulfillmentText = cie_scraping(URL_CIE, "QUANDO", None)
-    elif query_result.get("intent").get("displayName") == "CIE2_DOCUMENTI":
+    elif query_result.get("intent").get("displayName") == "CIE_DOCUMENTI":
         fulfillmentText = cie_scraping(URL_CIE, "DOCUMENTI", None)
-    elif query_result.get("intent").get("displayName") == "CIE2_DUPLICATO":
+    elif query_result.get("intent").get("displayName") == "CIE_DUPLICATO":
         fulfillmentText = cie_scraping(URL_CIE, "DUPLICATO", None)
-    elif query_result.get("intent").get("displayName") == "CIE2_ESPATRIO":
+    elif query_result.get("intent").get("displayName") == "CIE_ESPATRIO":
         fulfillmentText = cie_scraping(URL_CIE, "ESPATRIO", None)
-    elif query_result.get("intent").get("displayName") == "CIE2_PIN":
+    elif query_result.get("intent").get("displayName") == "CIE_PIN":
         fulfillmentText = cie_scraping(URL_CIE, "PIN/PUK", None)
-    elif query_result.get("intent").get("displayName") == "CIE2_ORGANI":
+    elif query_result.get("intent").get("displayName") == "CIE_ORGANI":
         fulfillmentText = cie_scraping(URL_CIE, "DONAZIONE", None)
     elif query_result.get("intent").get("displayName") == "CIE2_NON_COMUNITARI":
         fulfillmentText = cie_scraping(URL_CIE, "COMUNITARI", None)
-    elif query_result.get("intent").get("displayName") == "CIE2_PROCESSO":
+    elif query_result.get("intent").get("displayName") == "CIE_PROCESSO":
         fulfillmentText = cie_scraping(URL_CIE, None, "CIE_COME")
     elif query_result.get("intent").get("displayName") == "CIE_TEMPI":
         fulfillmentText = cie_scraping(URL_CIE, None, "CIE_TEMPI")
