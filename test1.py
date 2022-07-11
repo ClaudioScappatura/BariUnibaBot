@@ -423,7 +423,7 @@ def TARI_scraping(url, text, context):
         # stampa tutti i dati inerenti ai moduli per cambio di residenza
         TARI_Soup = soup.findAll('a', class_="inverted-link")
         for links in TARI_Soup:
-            print(links.text + ": \n - " + "https://www.comune.bari.it" + links["href"] + "\n")
+            fulfillmentText += ("\n" + links.text + ": \n - " + "https://www.comune.bari.it" + links["href"] + "\n")
 
     if context == "accordion_descrizione_servizio_13941714":
         fulfillmentText += "- http://www.comune.bari.it/web/economia-tasse-e-tributi/tariffe-e-rapporti-con-gli" \

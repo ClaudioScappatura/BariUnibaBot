@@ -13,6 +13,9 @@ URL_CIE = "https://www.comune.bari.it/web/egov/-/carta-d-identita-elettronica-ci
 # URL cambio di residenza
 URL_CR = "https://www.comune.bari.it/web/egov/-/cambio-di-residenza-con-provenienza-da-altro-comune-o-stato-estero-e-cambio-di-abitazione-bari-su-bari-"
 
+# URL Tari
+URL_TARI = "https://www.comune.bari.it/web/egov/-/dichiarazione-tari"
+
 
 def parsing_html(url):
     response = requests.get(url=url)
@@ -163,6 +166,137 @@ def cie_scraping(url, text, context):
 
     return fulfillmentText
 
+
+# scraping sulle info inerenti alla TARI
+def TARI_scraping(url, text, context):
+    fulfillmentText = ""
+    soup = parsing_html(url)
+    printText = False
+
+    # flag utile per la gestione degli allegati
+    allegati = False
+    if text is not None:
+        # flag per la gestione delle stampe
+        printText = False
+        match text:
+            case "DOCUMENTI":
+                text = "DOCUMENTI DA ALLEGARE"
+    elif context is not None:
+        match context:
+            case "TARI_COSA":
+                # COSA della Tari
+                context = "accordion_descrizione_servizio_13941714"
+            case "TARI_COME":
+                # COME della TARI
+                context = "accordion_come_13941714"
+            case "TARI_DOVE":  # PROBLEMA testo dinamico
+                # DOVE della tari
+                context = "accordion_dove_13941714"
+            case "TARI_COSTI":
+                # COSTI della Tari
+                context = "accordion_costi_13941714"
+            case "TARI_TEMPI":  # da implementare poiche dinamico
+                # TEMPI della Taro
+                context = "accordion_tempi_13941714"
+            case "TARI_ALLEGATI":
+                allegati = True
+    else:  # se text e context sono nulli, stampa tutte le informazioni in pagina
+        printText = True
+
+    if allegati is False:
+        TARI_Soup = soup.findAll('div', class_="accordion-body collapse in")
+        # se la variabile text è vuota, stampa tutte le info riguardo la CDI, altrimenti
+        # ricerca tutti i DIV di quella classe
+        for i in TARI_Soup:
+            if context is not None:
+                if i["id"] == context:
+                    printText = True
+                else:
+                    printText = False
+            try:
+                # analizza il primo figlio di ogni DIV trovato (il primo figlio sarà un altro DIV
+                for t in i.children:
+                    try:
+                        if len(t.findAll()) == 0 and printText is True:
+                            fulfillmentText += t.text
+                            fulfillmentText += "\n"
+                        # è la lista dei figli del secondo DIV
+                        for k in t.children:
+                            if k.name is not None:
+                                # verifica sul numero di figli
+                                has_child = len(k.findAll()) != 0
+                                # se il tag ha figli allora cerca e stampa i figli
+                                if has_child:
+                                    # è la lista di figli di ogni TAG all'interno di DIV
+                                    for z in k.children:
+                                        if z.name is not None:
+                                            # se è una scritta in stampatello senza tag che la precedono allora la stampo, la tolgo dal tag superiore, stampo il testo del tag padre e vado a capo
+                                            if z.text.isupper() and len(
+                                                    z.findPreviousSiblings()) == 0 and z.text != "N.B.":
+                                                if context is None:
+                                                    if text is not None:
+                                                        if text in z.text:
+                                                            printText = True
+                                                        else:
+                                                            printText = False
+                                                    else:
+                                                        printText = True
+                                                if printText is True:
+                                                    fulfillmentText += "\n"
+                                                    fulfillmentText += z.text
+                                                    # se il titolo in maiuscolo contiene fratelli all'interno dello stesso TAG, allora mette uno spazio per andare a capo
+                                                    if len(z.findNextSiblings()) != 0:
+                                                        fulfillmentText += "\n"
+                                                    fulfillmentText += k.text.replace(str(z.text), "")
+                                                    fulfillmentText += "\n"
+                                                    break  # esco per evitare duplicati
+
+                                            # se il tag è 'li' (elenco puntato), allora metti un a capo
+                                            elif z.name == "li" and printText is True:
+                                                fulfillmentText += "- "
+                                                fulfillmentText += z.text
+                                                fulfillmentText += "\n"
+                                            # se il tag non ha fratelli precedenti e successivi, allora stampa prima il testo del padre e poi il proprio (ESCLUSIONE DUPLICATI)
+                                            elif len(z.findPreviousSiblings()) == 0 and len(z.findNextSiblings()) == 0:
+                                                if printText is True:  # PROBLEMA di stampa quando il tag es.'p' possiede del testo senza tag, poi la presenza di un tag es.strong e poi nuovamente testo senza tag. Verrà stampato il testo con ordine invertito
+                                                    fulfillmentText += k.text.replace(str(z.text), "")
+                                                    fulfillmentText += z.text
+                                                    fulfillmentText += "\n"
+                                            else:  # se il tag ha più figli che però non rientrano in uno dei casi particolari precedenti, allora stampa il padre
+                                                if printText is True:
+                                                    fulfillmentText += k.text
+                                                    fulfillmentText += "\n"
+                                                    break  # evita duplicati
+
+
+                                # se il tag non ha figli, stampa il suo testo
+                                else:
+                                    if printText is True:
+                                        fulfillmentText += k.text
+                                        fulfillmentText += "\n"
+                    except:
+                        continue
+            except:
+                continue
+    else:
+        # stampa tutti i dati inerenti ai moduli per cambio di residenza
+        TARI_Soup = soup.findAll('a', class_="inverted-link")
+        for links in TARI_Soup:
+            fulfillmentText += ("\n" + links.text + ": \n - " + "https://www.comune.bari.it" + links["href"] + "\n")
+
+    if context == "accordion_descrizione_servizio_13941714":
+        fulfillmentText += "- http://www.comune.bari.it/web/economia-tasse-e-tributi/tariffe-e-rapporti-con-gli" \
+                           "-utenti-tari "
+
+    if context == "accordion_dove_13941714":
+        fulfillmentText = "SPORTELLO AL PUBBLICO TARI\n\nNumero di telefono:\n0809645690\nNumero di Email " \
+                          "PEC:\nriscossionetributi.comunebari@pec.rupar.puglia.it\nPosta " \
+                          "elettronica:\nrip.tributi@comune.bari.it\n\nORARI DI APERTURA:\nLunedì: 9.00 - " \
+                          "12.00\nMartedì : 9.00 - 12.00 / 15.30 - 17.00\nMercoledì : 9.00 - 12.00\nGiovedì : 9.00 - " \
+                          "12.00 / 15.30 - 17.00\nVenerdì : 9.00 - 12.00\nSabato : chiuso\n\nIndirizzo : Via Napoli," \
+                          "245 70123 Bari "
+
+    return fulfillmentText
 
 # scraping sulle info inerenti al cambio di residenza
 def CR_scraping(url, text, context):
@@ -399,6 +533,23 @@ def webhooks():
         fulfillmentText = CR_scraping(URL_CR, None, "CR_TEMPI")
     elif query_result.get("intent").get("displayName") == "CR_ALLEGATI":
         fulfillmentText = CR_scraping(URL_CR, None, "CR_ALLEGATI")
+
+    # intent della TARI
+    elif query_result.get("intent").get("displayName") == "TARI_INFO":
+        fulfillmentText = TARI_scraping(URL_TARI, None, "TARI_INFO")
+    elif query_result.get("intent").get("displayName") == "TARI_COSA":
+        fulfillmentText = TARI_scraping(URL_TARI, None, "TARI_COSA")
+    elif query_result.get("intent").get("displayName") == "TARI_COME":
+        fulfillmentText = TARI_scraping(URL_TARI, None, "TARI_COME")
+    elif query_result.get("intent").get("displayName") == "TARI_COSTI":
+        fulfillmentText = TARI_scraping(URL_TARI, None, "TARI_COSTI")
+    elif query_result.get("intent").get("displayName") == "TARI_TEMPI":
+        fulfillmentText = TARI_scraping(URL_TARI, None, "TARI_TEMPI")
+    elif query_result.get("intent").get("displayName") == "TARI_ALLEGATI":
+        fulfillmentText = TARI_scraping(URL_TARI, None, "TARI_ALLEGATI")
+    elif query_result.get("intent").get("displayName") == "TARI_DOCUMENTI":
+        fulfillmentText = TARI_scraping(URL_TARI, "DOCUMENTI", None)
+
     # if fulfillmentText == "":
     #    fulfillmentText = "Ho ancora tanto da imparare, puoi ripetere?"
 
