@@ -392,7 +392,7 @@ def webhooks():
             fulfillmentText = "Sede di Taranto (ICD):\n\nex II facoltà di Scienze, piano terra  Via A. De Gasperi, Quartiere Paolo VI 74123 Taranto"
         else:
             fulfillmentText = dib_location_scraping(URL_DIB_LOCATION)
-
+    # intent della carta di identità (CIE)
     elif query_result.get("intent").get("displayName") == "CIE_INFO":
         fulfillmentText = cie_scraping(URL_CIE, "INFO", None)
     elif query_result.get("intent").get("displayName") == "CIE_CHI_RICHIEDERE":
@@ -420,6 +420,27 @@ def webhooks():
     elif query_result.get("intent").get("displayName") == "CIE_PAGAMENTO":
         fulfillmentText = cie_scraping(URL_CIE, "PAGAMENTO", None)
 
+    # intent del cambio di residenza (CR)
+    elif query_result.get("intent").get("displayName") == "CR_INFO":
+        fulfillmentText = cie_scraping(URL_CIE, "INFO", None)
+    elif query_result.get("intent").get("displayName") == "CR_COSA":
+        fulfillmentText = cie_scraping(URL_CIE, None, "CR_COSA")
+    elif query_result.get("intent").get("displayName") == "CR_COME":
+        fulfillmentText = cie_scraping(URL_CIE, None, "CR_COME")
+    elif query_result.get("intent").get("displayName") == "CR_DOCUMENTI":
+        fulfillmentText = cie_scraping(URL_CIE, "ALLEGARE", None)
+    elif query_result.get("intent").get("displayName") == "CR_STRANIERI":
+        fulfillmentText = cie_scraping(URL_CIE, "STRANIERI", None)
+    elif query_result.get("intent").get("displayName") == "CR_MINORI":
+        fulfillmentText = cie_scraping(URL_CIE, "MINORI", None)
+    elif query_result.get("intent").get("displayName") == "CR_DOVE":
+        fulfillmentText = cie_scraping(URL_CIE, None, "CR_DOVE")
+    elif query_result.get("intent").get("displayName") == "CR_COSTI":
+        fulfillmentText = cie_scraping(URL_CIE, None, "CR_COSTI")
+    elif query_result.get("intent").get("displayName") == "CR_TEMPI":
+        fulfillmentText = cie_scraping(URL_CIE, None, "CR_TEMPI")
+    elif query_result.get("intent").get("displayName") == "CR_ALLEGATI":
+        fulfillmentText = cie_scraping(URL_CIE, None, "CR_ALLEGATI")
     # if fulfillmentText == "":
     #    fulfillmentText = "Ho ancora tanto da imparare, puoi ripetere?"
 
