@@ -590,7 +590,8 @@ def CDR_scraping(url, text, context):
                           "consistente nel pagamento dell’imposta e delle relative sanzioni previste dalle legge. "
 
     if context == "accordion_come_SCHEDA_SERVIZIO_IMPORTED_8868":
-        fulfillmentText = re.sub("(?s)NOTA BENE:.*?da presentare ad altre Pubbliche Amministrazioni.", "", fulfillmentText)
+        fulfillmentText = re.sub("(?s)NOTA BENE:.*?da presentare ad altre Pubbliche Amministrazioni.", "",
+                                 fulfillmentText)
 
     if pagamento:
         match1 = re.search("(?s)MODALITA’ DI PAGAMENTO.*?dell'anagrafe con il POS", fulfillmentText)
@@ -606,8 +607,9 @@ def CDR_scraping(url, text, context):
 
     return fulfillmentText
 
-print(CR_scraping())
-#print(cie_scraping(URL_CIE, None, "CIE_TEMPI"))
+
+print(CR_scraping(URL_CR, None, "CR_ALLEGATI"))
+# print(cie_scraping(URL_CIE, None, "CIE_TEMPI"))
 
 # print(cie_scraping(URL_CIE, None, "CDI_DOVE"))
 # print(cie_scraping(URL_CIE, "UFFICIO ANAGRAFE SAN PASQUALE", None))

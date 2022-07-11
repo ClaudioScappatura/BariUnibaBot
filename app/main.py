@@ -282,9 +282,10 @@ def CR_scraping(url, text, context):
                 continue
     else:
         # stampa tutti i dati inerenti ai moduli per cambio di residenza
+        fulfillmentText = ""
         CR_Soup = soup.findAll('a', class_="inverted-link")
         for links in CR_Soup:
-            print(links.text + ": \n - " + "https://www.comune.bari.it" + links["href"] + "\n")
+            fulfillmentText += (links.text + ": \n - " + "https://www.comune.bari.it" + links["href"] + "\n")
 
     if text is not None:
         if text == "UFFICIO ANAGRAFE CENTRALE":
