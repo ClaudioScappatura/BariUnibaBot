@@ -304,7 +304,7 @@ def CR_scraping(url, text, context):
     if context == "accordion_costi_11639056":
         fulfillmentText = "COSTO CAMBIO DI RESIDENZA:\nGratuito"
 
-    if context == "INFO":
+    if context == "CR_INFO":
         fulfillmentText = "Cosa vuoi sapere nello specifico?\n - Cos'è il C.D.R.(cambio di residenza)\n - Come " \
                           "cambiare residenza\n - Documenti da allegare al C.D.R.\n - Cambio residenza cittadini " \
                           "stranieri\n - Costo del C.D.R.\n - Costo del C.D.R.\n - Tempi necessari per il C.D.R.\n - " \
