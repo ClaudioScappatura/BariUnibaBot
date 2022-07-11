@@ -1,6 +1,5 @@
 beautifulsoup4==4.9.3
 bs4==0.0.1
-certifi==2021.5.30
 chardet==4.0.0
 click==8.0.1
 colorama==0.4.4
@@ -16,6 +15,6 @@ urllib3==1.26.6
 Werkzeug==2.0.1
 aiohttp==3.8.1
 Babel==2.9.1
-certifi==2021.10.8
+certifi==2021.5.30
 aiogram==2.21
 
