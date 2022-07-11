@@ -14,3 +14,7 @@ requests==2.25.1
 soupsieve==2.2.1
 urllib3==1.26.6
 Werkzeug==2.0.1
+httpx==0.23.0
+tornado==6.1
+cachetools==5.2.0
+APScheduler==3.9.1
