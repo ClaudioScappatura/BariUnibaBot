@@ -294,18 +294,7 @@ def CR_scraping(url, text, context):
                               "4 70122 Bari "
 
     if context == "accordion_come_11639056":
-        fulfillmentText = fulfillmentText.replace("1) CITTADINI STRANIERI","")
-        fulfillmentText = fulfillmentText.replace("- Il cittadino di uno Stato non appartenente all'Unione Europea "
-                                                  "deve allegare la documentazione indicata nell' allegato A) del "
-                                                  "modulo ministeriale.", "")
-        fulfillmentText = fulfillmentText.replace("- Il cittadino di uno Stato appartenente all'Unione Europea deve "
-                                                  "allegare la documentazione indicata nell' allegato B) del modulo "
-                                                  "ministeriale.","")
-
-        match1 = re.search("(?sm)le comunicazioni per il cambio di residenza/indirizzo(.*?)(?=[\r\n]*\w*2\) "
-                           "TRASFERIMENTO DI NUCLEO)",
-                           fulfillmentText, re.IGNORECASE)
-        fulfillmentText = match1.group(0)
+        fulfillmentText = CR_replace(fulfillmentText)
 
     if context == "accordion_costi_11639056":
         fulfillmentText = "COSTO CAMBIO DI RESIDENZA:\nGratuito"
@@ -614,6 +603,40 @@ def CDR_scraping(url, text, context):
                           "12.00\n Mercoledì : 9.00 - 12.00\n Giovedì : 9.00 - 12.00 e 15.30 - 17.00\n Venerdì : 9.00 - " \
                           "12.00\n Sabato : chiuso\n\nIndirizzo : Corso Vittorio Veneto,4 70122 Bari "
 
+    return fulfillmentText
+
+
+def CR_replace(fulfillmentText):
+    fulfillmentText = fulfillmentText.replace("1) CITTADINI STRANIERI", "")
+    fulfillmentText = fulfillmentText.replace("- Il cittadino di uno Stato non appartenente all'Unione Europea "
+                                              "deve allegare la documentazione indicata nell' allegato A) del "
+                                              "modulo ministeriale.", "")
+    fulfillmentText = fulfillmentText.replace("- Il cittadino di uno Stato appartenente all'Unione Europea deve "
+                                              "allegare la documentazione indicata nell' allegato B) del modulo "
+                                              "ministeriale.", "")
+    fulfillmentText = fulfillmentText.replace(
+        "- presentandosi agli sportelli dedicati presso (N.B. questa modalità è temporaneamente sospesa) - l’Anagrafe Centrale, in corso Vittorio Veneto n. 4, attivo dal lunedì al venerdì dalle 9,00 alle 12,00 (nell’orario mattutino lo sportello accoglierà un massimo di 20 utenti) ed il giovedì anche di pomeriggio dalle ore 15,30 alle 17,00 (N.B. nell’orario pomeridiano lo sportello accoglierà un massimo di 10 utenti) - la Delegazione Oriente (Carrassi) in via Luigi Pinto n. 3, dal lunedì al venerdì dalle ore 9,00 alle 12,00, per un un massimo di 10 utenti.  Per usufruire di tale servizio non è richiesta la prenotazione. Il diretto interessato deve recarsi in loco con documentazione e modulistica necessaria, che varia in base alle caratteristiche del medesimo cambio di residenza (a che titolo si occupa il nuovo appartamento, quante persone si spostano, ecc). Per ulteriori informazioni è consigliabile contattare l’URP;\n",
+        "")
+    fulfillmentText = fulfillmentText.replace(
+        "Nel caso di: iscrizione anagrafica in una convivenza (collegi, caserme, ecc) (consulta scheda dedicata) -  cittadino senza fissa dimora (scarica il modulo) – cambio di residenza con delega (scarica il modulo di delega)  è necessario presentarsi presso l'Anagrafe Centrale ed utilizzare la modulistica dedicata.\n",
+        "")
+    fulfillmentText = fulfillmentText.replace(
+        "In ogni caso la persona interessata o un delegato deve presentarsi agli sportelli dell'anagrafe centrale o delle delegazioni di Oriente e Carbonara, con la modulistica compilata e sottoscritta da tutti i componenti del nucleo familiare maggiorenni, completo di tutti gli allegati. La modulistica è disponibile presso tutti gli uffici anagrafici (sede centrale e delegazioni), presso gli sportelli URP e scaricabile in fondo alla presente scheda.",
+        "")
+    fulfillmentText = fulfillmentText.replace(
+        "In seguito all’approvazione del D.L. 47/2014 per la lotta all’occupazione abusiva, il richiedente deve dichiarare il titolo (proprietà, locazione, comodato, etc.) in base al quale occupa legittimamente l’abitazione (pagina 4 del modello ministeriale).  Qualora il dichiarante non fosse in possesso di un valido titolo di occupazione dell’alloggio o in caso di aggregazione a nuclei familiari già residenti, il proprietario dell’immobile deve compilare un’apposita dichiarazione in cui afferma di essere a conoscenza della richiesta di residenza (allegato 2). Il proprietario sottoscrive la dichiarazione, allegando copia del documento di riconoscimento.\n",
+        "")
+    fulfillmentText = fulfillmentText.replace(
+        "Nel caso si tratti di , occorrerà presentare il titolo di assegnazione dell’alloggio o l’autorizzazione all’ampliamento del nucleo familiare rilasciati dall’Ente gestorealloggi di edilizia popolare",
+        "")
+    fulfillmentText = fulfillmentText.replace(
+        "Nel caso si tratti di un fabbricato di nuova costruzione: \"Ai sensi degli artt. 42e 43 del D.P.R. 223/89 (Regolamento Anagrafico), non appena ultimata la costruzione di un fabbricato e comunque prima che il fabbricato possa essere occupato, il costruttore e/o il proprietario ha l'obbligo di chiedere l'attribuzione del numero civico. Pertanto, al momento dell'iscrizione anagrafica e/o del cambio di abitazione, il numero civico dichiarato deve essere presente nella banca dati toponomastica. Nel caso in cui il numero civico non risulti ufficialmente assegnato dall'Ufficio Toponomastica non si potrà dar corso all'istanza presentata che, quindi, verrà respinta.\"\n",
+        "")
+
+    match1 = re.search("(?sm)le comunicazioni per il cambio di residenza/indirizzo(.*?)(?=[\r\n]*\w*2\) "
+                       "TRASFERIMENTO DI NUCLEO)",
+                       fulfillmentText, re.IGNORECASE)
+    fulfillmentText = match1.group(0)
     return fulfillmentText
 
 
