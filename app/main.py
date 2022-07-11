@@ -295,6 +295,10 @@ def TARI_scraping(url, text, context):
                           "12.00\nMartedì : 9.00 - 12.00 / 15.30 - 17.00\nMercoledì : 9.00 - 12.00\nGiovedì : 9.00 - " \
                           "12.00 / 15.30 - 17.00\nVenerdì : 9.00 - 12.00\nSabato : chiuso\n\nIndirizzo : Via Napoli," \
                           "245 70123 Bari "
+    if context == "TARI_INFO":
+        fulfillmentText = "Cosa ti interessa sapere sulla TARI?\n - Cos'è la TARI\n - Come denunciare/dichiarare la " \
+                          "TARI\n - Quali documenti allegare per la TARI\n - Posizione/Orari uffici TARI\n - Costo " \
+                          "per la denuncia TARI\n - Tempi per denunciare la TARI\n - Moduli per denuncia TARI\n "
 
     return fulfillmentText
 
