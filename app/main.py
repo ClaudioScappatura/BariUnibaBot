@@ -4,7 +4,6 @@ from bs4 import BeautifulSoup
 import re
 import requests
 from flask import Flask, request
-from aiogram import Bot, Dispatcher, executor, types
 
 app = Flask(__name__)
 
@@ -654,8 +653,6 @@ def CDR_scraping(url, text, context):
 
     if context == "CDR_INFO":
         fulfillmentText = "Cosa vuoi sapere sul certificato di residenza (C.R.)?\n - Cos'è il certificato di residenza\n - Come richiedere il C.R.\n - Richiedere il C.R. in edicola\n - Validita del C.R.\n - Posizione/orari uffici per il C.R.\n - Costi del C.R.\n - Casi di esenzione C.R.\n - Modalità di pagamento C.R.\n - Tempi di rilascio C.R.\n - Moduli per richiesta C.R.\n"
-        bot = Bot(token='5430259949:AAFWM6G3Nma71fS8SkoeVOQ-Fw_XrSaaVRQ')
-        dp = Dispatcher(bot)
 
     return fulfillmentText
 
