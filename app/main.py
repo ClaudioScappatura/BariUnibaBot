@@ -284,7 +284,7 @@ def CR_scraping(url, text, context):
         for links in CR_Soup:
             fulfillmentText += ("\n" + links.text + ": \n - " + "https://www.comune.bari.it" + links["href"] + "\n")
 
-    if text is not None:
+    if context == "accordion_dove_11639056":
         if text == "UFFICIO ANAGRAFE CENTRALE":
             fulfillmentText = "UFFICIO ANAGRAFE CENTRALE - DICHIARAZIONI DI RESIDENZA E CAMBI DI DOMICILIO\n\nNumero " \
                               "di telefono:\n080/5773332 - 3333 - 3355 - 3376 - 3344 - 3314 - 3729 - 6450 - 2489 - " \
@@ -306,7 +306,6 @@ def CR_scraping(url, text, context):
                           "Moduli per il C.D.R.\n - Orari di apertura ufficio anagrafe "
 
     return fulfillmentText
-
 
 
 def CR_replace(fulfillmentText):
@@ -341,6 +340,7 @@ def CR_replace(fulfillmentText):
                        fulfillmentText, re.IGNORECASE)
     fulfillmentText = match1.group(0)
     return fulfillmentText
+
 
 @app.route("/webhooks", methods=["POST"])
 def webhooks():
