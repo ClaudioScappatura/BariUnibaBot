@@ -285,7 +285,7 @@ def CR_scraping(url, text, context):
         fulfillmentText = ""
         CR_Soup = soup.findAll('a', class_="inverted-link")
         for links in CR_Soup:
-            fulfillmentText += (links.text + ": \n - " + "https://www.comune.bari.it" + links["href"] + "\n")
+            fulfillmentText += ("\n"+links.text + ": \n - " + "https://www.comune.bari.it" + links["href"] + "\n")
 
     if text is not None:
         if text == "UFFICIO ANAGRAFE CENTRALE":
