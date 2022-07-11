@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 import re
 import requests
 from flask import Flask, request
-
+from aiogram import Bot, Dispatcher, executor, types
 app = Flask(__name__)
 
 # url intent carta di identità
@@ -649,6 +649,9 @@ def CDR_scraping(url, text, context):
 
     if context == "CDR_INFO":
         fulfillmentText = "Cosa vuoi sapere sul certificato di residenza (C.R.)?\n - Cos'è il certificato di residenza\n - Come richiedere il C.R.\n - Richiedere il C.R. in edicola\n - Validita del C.R.\n - Posizione/orari uffici per il C.R.\n - Costi del C.R.\n - Casi di esenzione C.R.\n - Modalità di pagamento C.R.\n - Tempi di rilascio C.R.\n - Moduli per richiesta C.R.\n"
+        bot = Bot(token='5430259949:AAFWM6G3Nma71fS8SkoeVOQ-Fw_XrSaaVRQ')
+        dp = Dispatcher(bot)
+
 
     return fulfillmentText
 
@@ -657,13 +660,19 @@ def CDR_scraping(url, text, context):
 def webhooks():
     req = request.get_json(silent=True, force=True)
     fulfillmentText = ""
+    bot = Bot(token='5430259949:AAFWM6G3Nma71fS8SkoeVOQ-Fw_XrSaaVRQ')
+    dp = Dispatcher(bot)
 
+    @dp.message_handler()
+    async def echo(message: types.Message):
+        await message.reply("SONO IL BOT")
     # processo la query che arriva in JSON
     query_result = req.get('queryResult')
 
     # intent della carta di identità (CIE)
     if query_result.get("intent").get("displayName") == "CIE_INFO":
         fulfillmentText = cie_scraping(URL_CIE, "INFO", None)
+        echo
     elif query_result.get("intent").get("displayName") == "CIE_CHI_RICHIEDERE":
         fulfillmentText = cie_scraping(URL_CIE, "CHI", None)
     elif query_result.get("intent").get("displayName") == "CIE_QUANDO_RICHIEDERE":
@@ -753,7 +762,7 @@ def webhooks():
     elif query_result.get("intent").get("displayName") == "CDR_ESENZIONE":
         fulfillmentText = CDR_scraping(URL_CDR, "PAGAMENTO", None)
 
-
+    executor.start_polling(dp)
     # if fulfillmentText == "":
     #    fulfillmentText = "Ho ancora tanto da imparare, puoi ripetere?"
 

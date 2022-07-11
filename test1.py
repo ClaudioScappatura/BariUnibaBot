@@ -3,6 +3,7 @@ import unicodedata
 from bs4 import BeautifulSoup
 import re
 import requests
+from aiogram import Bot, Dispatcher, executor, types
 from flask import Flask, request
 
 # URL Carta di identità elettronica
@@ -614,9 +615,6 @@ def CDR_scraping(url, text, context):
     return fulfillmentText
 
 
-print(CDR_scraping(URL_CDR, None, "CDR_INFO"))
-
-
 def CR_replace(fulfillmentText):
     fulfillmentText = fulfillmentText.replace("1) CITTADINI STRANIERI", "")
     fulfillmentText = fulfillmentText.replace("- Il cittadino di uno Stato non appartenente all'Unione Europea "
@@ -651,17 +649,28 @@ def CR_replace(fulfillmentText):
     return fulfillmentText
 
 
-def NEWS_scraping(url):  # funziona
-    fulfillmentText = ""
+def NEWS_scraping(url):
+    bot = Bot(token='5430259949:AAFWM6G3Nma71fS8SkoeVOQ-Fw_XrSaaVRQ')
+    dp = Dispatcher(bot)
+
+    @dp.message_handler()
+    async def reply(message: types.Message):
+        await message.reply("SONO IL BOT")
+
+
+    fulfillmentText = "\nLE NOTIZIE:\n "
     soup = parsing_html(url)
     notices = soup.findAll('div', class_="notizia padding10")
     for news1 in notices:
-        print(news1.a["title"])
-        print(news1.a.text)
-        print(news1.a["href"])
-        print("\n")
+        fulfillmentText += "\n" + news1.a["title"] + "\n" + news1.a["href"] + "\n"
+        reply()
 
-# NEWS_scraping(URL_NEWS)
+    executor.start_polling(dp)
+    return fulfillmentText
+
+
+# print(CDR_scraping(URL_CDR, None, "CDR_INFO"))
+print(NEWS_scraping(URL_NEWS))
 # print(CDR_scraping(URL_CDR, None, "CDR_COSA"))
 # print(cie_scraping(URL_CIE, None, "CIE_TEMPI"))
 
