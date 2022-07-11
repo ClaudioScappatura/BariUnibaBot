@@ -167,21 +167,32 @@ def cie_scraping(url, text, context):
             except:
                 continue
     else:
-        fulfillmentText = "Nello specifico cosa ti interessa sapere riguardo la CIE (carta di identità " \
-                          "elettronica)?:\n - Chi può richiedere la CIE\n - Quando poter richiedere la CIE\n - Come " \
-                          "richiedere la CIE (procedimento)\n - Documenti necessari a richiedere la CIE\n - " \
+        fulfillmentText = "Cosa ti interessa sapere riguardo la CIE (carta di identità " \
+                          "elettronica)?:\n\n - Chi può richiedere la CIE\n - Quando poter richiedere la CIE\n - Come " \
+                          "richiedere la CIE (procedimento)\n - Documenti necessari per richiesta CIE\n - " \
                           "Richiedere un duplicato della CIE\n - CIE per cittadini NON comunitari\n - Validità della " \
-                          "CIE per l'espartrio\n - Info su PIN e PUK\n - Esperimersi sulla donazione degli organi\n - " \
-                          "Portale CIE\n - Tempi di arrivo/Durata CIE"
+                          "CIE per l'espartrio\n - Info su PIN e PUK\n - Esperimersi sulla donazione degli    " \
+                          "organi\n - " \ 
+                          "Portale CIE\n - Costi della CIE\n - Come pagare la CIE\n - Tempi di arrivo CIE\n - Durata " \
+                          "validità CIE "
 
-        # STAMPA SEZIONE ORARI
-        # NON FUNZIONA PERCHE PRENDE DATI DA UN DOCUMENTO/DATABASE
-        if context is not None and context == "accordion_dove_5469203":
-            fulfillmentText = ""
-            soup = parsing_html(url)
-            res1 = soup.find_all()
-            for cus1 in res1:
-                print(cus1)
+    if text is not None:
+        if text == "UFFICIO ANAGRAFE CENTRALE":
+            fulfillmentText = "UFFICIO ANAGRAFE CENTRALE - CARTE D'IDENTITÀ\n\nNumero di telefono:\n080/5773357 - " \
+                                  "3304 - 3782\nNumero di Email PEC:\n " \
+                                  "ci.anagrafe.comunebari@pec.rupar.puglia.it\n\nORARI DI APERTURA AL " \
+                                  "PUBBLICO:\n\nLunedì: 9.00 - 12.00\nMartedì: 9.00 - 12.00\nMercoledì: 9.00 - " \
+                                  "12.00\nGiovedì: 9.00 - 12.00 e 15.30 - 17.00\nVenerdì: 9.00 - 12.00\nSabato: " \
+                                  "chiuso\n\nIndirizzo: Corso Vittorio Veneto,4 70122 Bari "
+        elif text == "UFFICIO ANAGRAFE SAN PASQUALE":
+            fulfillmentText = "UFFICIO ANAGRAFE/STATO CIVILE DECENTRATO - DELEGAZIONE CARRASSI-SAN " \
+                                  "PASQUALE\n\nNumero di telefono :  \n080/5772491 080/5772493  080/5772496  " \
+                                  "080/5772497\nNumero di Email PEC " \
+                                  ":\ndelegazione.carrassi.comunebari@pec.rupar.puglia.it\n\nPosta elettronica :\n " \
+                                  "delegazione.oriente@comune.bari.it\n\nOrari di apertura al pubblico :\nLunedì : " \
+                                  "9.00 - 12.30\nMartedì : 9.00 - 12.30\nMercoledì : 9.00 - 12.30\nGiovedì : 9.00 - " \
+                                  "13.00 e 16.00 - 17.30\nVenerdì : 9.00 - 12.30\nSabato : chiuso\n\nIndirizzo : Via " \
+                                  "Luigi Pinto,3 70125 Bari "
 
     return fulfillmentText
 

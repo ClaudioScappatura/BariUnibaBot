@@ -144,14 +144,23 @@ def cie_scraping(url, text, context):
                           "CIE per l'espatrio\n - Info su PIN e PUK\n - Esperimersi sulla donazione degli organi\n - " \
                           "Portale CIE\n "
 
-        # STAMPA SEZIONE ORARI
-        # NON FUNZIONA PERCHE PRENDE DATI DA UN DOCUMENTO/DATABASE
-        if context is not None and context == "accordion_dove_5469203":
-            fulfillmentText = ""
-            soup = parsing_html(url)
-            res1 = soup.find_all()
-            for cus1 in res1:
-                print(cus1)
+    if text is not None:
+        if text == "UFFICIO ANAGRAFE CENTRALE":
+            fulfillmentText = "UFFICIO ANAGRAFE CENTRALE - CARTE D'IDENTITÀ\n\nNumero di telefono:\n080/5773357 - " \
+                              "3304 - 3782\nNumero di Email PEC:\n " \
+                              "ci.anagrafe.comunebari@pec.rupar.puglia.it\n\nORARI DI APERTURA AL " \
+                              "PUBBLICO:\n\nLunedì: 9.00 - 12.00\nMartedì: 9.00 - 12.00\nMercoledì: 9.00 - " \
+                              "12.00\nGiovedì: 9.00 - 12.00 e 15.30 - 17.00\nVenerdì: 9.00 - 12.00\nSabato: " \
+                              "chiuso\n\nIndirizzo: Corso Vittorio Veneto,4 70122 Bari "
+        elif text == "UFFICIO ANAGRAFE SAN PASQUALE":
+            fulfillmentText = "UFFICIO ANAGRAFE/STATO CIVILE DECENTRATO - DELEGAZIONE CARRASSI-SAN " \
+                              "PASQUALE\n\nNumero di telefono :  \n080/5772491 080/5772493  080/5772496  " \
+                              "080/5772497\nNumero di Email PEC " \
+                              ":\ndelegazione.carrassi.comunebari@pec.rupar.puglia.it\n\nPosta elettronica :\n " \
+                              "delegazione.oriente@comune.bari.it\n\nOrari di apertura al pubblico :\nLunedì : " \
+                              "9.00 - 12.30\nMartedì : 9.00 - 12.30\nMercoledì : 9.00 - 12.30\nGiovedì : 9.00 - " \
+                              "13.00 e 16.00 - 17.30\nVenerdì : 9.00 - 12.30\nSabato : chiuso\n\nIndirizzo : Via " \
+                              "Luigi Pinto,3 70125 Bari "
 
     return fulfillmentText
 
@@ -181,6 +190,7 @@ def CR_scraping(url, text, context):
             case "CR_COME":
                 # COME del cambio di residenza
                 context = "accordion_come_11639056"
+                printText = True
             case "CR_DOVE":
                 # DOVE del cambio di residenza
                 context = "accordion_dove_11639056"
@@ -246,7 +256,8 @@ def CR_scraping(url, text, context):
                                                 fulfillmentText += z.text
                                                 fulfillmentText += "\n"
                                             # se il tag non ha fratelli precedenti e successivi, allora stampa prima il testo del padre e poi il proprio (ESCLUSIONE DUPLICATI)
-                                            elif len(z.findPreviousSiblings()) == 0 and len(z.findNextSiblings()) == 0:
+                                            elif (len(z.findPreviousSiblings()) == 0 and len(
+                                                    z.findNextSiblings()) == 0):
                                                 if printText is True:
                                                     fulfillmentText += k.text.replace(str(z.text), "")
                                                     fulfillmentText += z.text
@@ -273,6 +284,29 @@ def CR_scraping(url, text, context):
         for links in CR_Soup:
             print(links.text + ": \n - " + "https://www.comune.bari.it" + links["href"] + "\n")
 
+    if text is not None:
+        if text == "UFFICIO ANAGRAFE CENTRALE":
+            fulfillmentText = "UFFICIO ANAGRAFE CENTRALE - DICHIARAZIONI DI RESIDENZA E CAMBI DI DOMICILIO\n\nNumero " \
+                              "di telefono:\n080/5773332 - 3333 - 3355 - 3376 - 3344 - 3314 - 3729 - 6450 - 2489 - " \
+                              "4636 - 4606\nNumero di fax:\n080/5773359\nNumero di Email " \
+                              "PEC:\nanagrafe.comunebari@pec.rupar.puglia.it\nPosta elettronica " \
+                              ":\nufficio.dichiarazioniresidenza@comune.bari.it\n\nIndirizzo : Corso Vittorio Veneto," \
+                              "4 70122 Bari "
+
+    if context == "accordion_come_11639056":
+        match1 = re.search("(?sm)al fine di (.*?)(?=[\r\n]*\w*2\) TRASFERIMENTO DI NUCLEO)",
+                           fulfillmentText, re.IGNORECASE)
+        fulfillmentText = match1.group(0)
+
+    if context == "accordion_costi_11639056":
+        fulfillmentText = "COSTO CAMBIO DI RESIDENZA:\nGratuito"
+
+    if context == "INFO":
+        fulfillmentText = "Cosa vuoi sapere nello specifico?\n - Cos'è il C.D.R.(cambio di residenza)\n - Come " \
+                          "cambiare residenza\n - Documenti da allegare al C.D.R.\n - Cambio residenza cittadini " \
+                          "stranieri\n - Costo del C.D.R.\n - Costo del C.D.R.\n - Tempi necessari per il C.D.R.\n - " \
+                          "Moduli per il C.D.R.\n - Orari di apertura ufficio anagrafe "
+
     return fulfillmentText
 
 
@@ -288,7 +322,7 @@ def TARI_scraping(url, text, context):
         # flag per la gestione delle stampe
         printText = False
         match text:
-            case "ALLEGARE":
+            case "DOCUMENTI":
                 text = "DOCUMENTI DA ALLEGARE"
     elif context is not None:
         match context:
@@ -393,6 +427,18 @@ def TARI_scraping(url, text, context):
         for links in TARI_Soup:
             print(links.text + ": \n - " + "https://www.comune.bari.it" + links["href"] + "\n")
 
+    if context == "accordion_descrizione_servizio_13941714":
+        fulfillmentText += "- http://www.comune.bari.it/web/economia-tasse-e-tributi/tariffe-e-rapporti-con-gli" \
+                           "-utenti-tari "
+
+    if context == "accordion_dove_13941714":
+        fulfillmentText = "SPORTELLO AL PUBBLICO TARI\n\nNumero di telefono:\n0809645690\nNumero di Email " \
+                          "PEC:\nriscossionetributi.comunebari@pec.rupar.puglia.it\nPosta " \
+                          "elettronica:\nrip.tributi@comune.bari.it\n\nORARI DI APERTURA:\nLunedì: 9.00 - " \
+                          "12.00\nMartedì : 9.00 - 12.00 / 15.30 - 17.00\nMercoledì : 9.00 - 12.00\nGiovedì : 9.00 - " \
+                          "12.00 / 15.30 - 17.00\nVenerdì : 9.00 - 12.00\nSabato : chiuso\n\nIndirizzo : Via Napoli," \
+                          "245 70123 Bari "
+
     return fulfillmentText
 
 
@@ -401,6 +447,7 @@ def CDR_scraping(url, text, context):
     fulfillmentText = ""
     soup = parsing_html(url)
     printText = False
+    pagamento = False
     # flag utile per la gestione degli allegati
     allegati = False
     if text is not None:
@@ -413,6 +460,9 @@ def CDR_scraping(url, text, context):
                 text = "CERTIFICATI IN EDICOLA"
             case "ESENZIONE":
                 text = "CASI DI ESENZIONE"
+            case "PAGAMENTO":
+                text = None
+                pagamento = True
     elif context is not None:
         match context:
             case "CDR_COSA":
@@ -528,10 +578,36 @@ def CDR_scraping(url, text, context):
     fulfillmentText = re.sub("STAMPA.    In entrambi i casi", "STAMPA.\n\n In entrambi i casi", fulfillmentText)
     fulfillmentText = re.sub("2. Direttamente presso", "\n\n2. Direttamente presso", fulfillmentText)
     if text == "CASI DI ESENZIONE":
-        fulfillmentText = "CASI DI ESENZIONE\nIn caso di esenzione, spetta al soggetto richiedente dichiarare il relativo uso ed indicare la norma di riferimento che dispone il diritto di esenzione, in quanto l’esenzione non può essere presunta dall’operatore del servizio anagrafico.\nDi seguito, si riportano alcuni dei principali casi di esenzione, relativi ai certificati anagrafici, previsti dalle norme vigenti:\n\nATTENZIONE: Per visualizzare la tabella riguardo le esenzioni, visita: https://www.comune.bari.it/web/egov/-/certificato-di-residenza\n\nNOTA BENE: l’utilizzo di certificati rilasciati in esenzione da bolli, per fini diversi da quelli indicati sul certificato, equivale a evasione fiscale e comporta la responsabilità del richiedente, consistente nel pagamento dell’imposta e delle relative sanzioni previste dalle legge."
+        fulfillmentText = "CASI DI ESENZIONE\nIn caso di esenzione, spetta al soggetto richiedente dichiarare il " \
+                          "relativo uso ed indicare la norma di riferimento che dispone il diritto di esenzione, " \
+                          "in quanto l’esenzione non può essere presunta dall’operatore del servizio anagrafico.\nDi " \
+                          "seguito, si riportano alcuni dei principali casi di esenzione, relativi ai certificati " \
+                          "anagrafici, previsti dalle norme vigenti:\n\nATTENZIONE: Per visualizzare la tabella " \
+                          "riguardo le esenzioni, visita: " \
+                          "https://www.comune.bari.it/web/egov/-/certificato-di-residenza\n\nNOTA BENE: l’utilizzo di " \
+                          "certificati rilasciati in esenzione da bolli, per fini diversi da quelli indicati sul " \
+                          "certificato, equivale a evasione fiscale e comporta la responsabilità del richiedente, " \
+                          "consistente nel pagamento dell’imposta e delle relative sanzioni previste dalle legge. "
+
+    if context == "accordion_come_SCHEDA_SERVIZIO_IMPORTED_8868":
+        fulfillmentText = re.sub("(?s)NOTA BENE:.*?da presentare ad altre Pubbliche Amministrazioni.", "", fulfillmentText)
+
+    if pagamento:
+        match1 = re.search("(?s)MODALITA’ DI PAGAMENTO.*?dell'anagrafe con il POS", fulfillmentText)
+        fulfillmentText = match1.group(0)
+
+    if context == "accordion_dove_SCHEDA_SERVIZIO_IMPORTED_8868":
+        fulfillmentText = "UFFICIO ANAGRAFE CENTRALE\n\nNumero di telefono :\n 080/5773387 080/5773392\n (chiamare " \
+                          "dal lunedì al venerdì ore 8.30/ 9.00 e 13.00/13.45)\n\nNumero di Email PEC :\n " \
+                          "anagrafe.comunebari@pec.rupar.puglia.it \n (tale indirizzo è abilitato a ricevere sia email " \
+                          "che pec)\n\nOrari di apertura al pubblico :\n Lunedì : 9.00 - 12.00\n Martedì : 9.00 - " \
+                          "12.00\n Mercoledì : 9.00 - 12.00\n Giovedì : 9.00 - 12.00 e 15.30 - 17.00\n Venerdì : 9.00 - " \
+                          "12.00\n Sabato : chiuso\n\nIndirizzo : Corso Vittorio Veneto,4 70122 Bari "
 
     return fulfillmentText
 
 
+print(cie_scraping(URL_CIE, None, "CIE_TEMPI"))
+
 # print(cie_scraping(URL_CIE, None, "CDI_DOVE"))
-print(cie_scraping(URL_CIE, None, "CIE_COME"))
+# print(cie_scraping(URL_CIE, "UFFICIO ANAGRAFE SAN PASQUALE", None))
