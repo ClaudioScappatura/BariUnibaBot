@@ -289,8 +289,8 @@ def TARI_scraping(url, text, context):
                            "-utenti-tari "
 
     if context == "accordion_dove_13941714":
-        fulfillmentText = "SPORTELLO AL PUBBLICO TARI\n\nNumero di telefono:\n0809645690\nNumero di Email " \
-                          "PEC:\nriscossionetributi.comunebari@pec.rupar.puglia.it\nPosta " \
+        fulfillmentText = "SPORTELLO AL PUBBLICO TARI\n\nNumero di telefono:\n0809645690\n\nNumero di Email " \
+                          "PEC:\nriscossionetributi.comunebari@pec.rupar.puglia.it\n\nPosta " \
                           "elettronica:\nrip.tributi@comune.bari.it\n\nORARI DI APERTURA:\nLunedì: 9.00 - " \
                           "12.00\nMartedì : 9.00 - 12.00 / 15.30 - 17.00\nMercoledì : 9.00 - 12.00\nGiovedì : 9.00 - " \
                           "12.00 / 15.30 - 17.00\nVenerdì : 9.00 - 12.00\nSabato : chiuso\n\nIndirizzo : Via Napoli," \
@@ -549,6 +549,8 @@ def webhooks():
         fulfillmentText = TARI_scraping(URL_TARI, None, "TARI_ALLEGATI")
     elif query_result.get("intent").get("displayName") == "TARI_DOCUMENTI":
         fulfillmentText = TARI_scraping(URL_TARI, "DOCUMENTI", None)
+    elif query_result.get("intent").get("displayName") == "TARI_DOVE":
+        fulfillmentText = TARI_scraping(URL_TARI, None, "TARI_DOVE")
 
     # if fulfillmentText == "":
     #    fulfillmentText = "Ho ancora tanto da imparare, puoi ripetere?"
