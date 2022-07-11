@@ -7,44 +7,14 @@ from flask import Flask, request
 
 app = Flask(__name__)
 
-# intent ricerca personale:
-# url professori
-URL_PROF = "https://www.uniba.it/ricerca/dipartimenti/informatica/dipartimento/personale/docenti-2"
-# url tecnici
-URL_SEGRET = "https://www.uniba.it/ricerca/dipartimenti/informatica/dipartimento/personale/tecniciamministrativi"
-# url tecnici studenti stranieri
-URL_SEGRET_FOREIGN = "https://www.uniba.it/ricerca/dipartimenti/informatica/instructions-for-the-eligibility-for-the-master-degree-in-computer-science"
-# parsing per le informazioni del personale (docenti + segretari)
-
-# url intent biblioteca
-URL_BIBLIO = "https://www.uniba.it/bibliotechecentri/informatica/biblioteca-di-informatica"
-
-# url intent Convenzioni
-URL_RESOURCES = "https://www.uniba.it/ricerca/dipartimenti/informatica"
-
-# url intent Corsi di laurea
-URL_CDL = "https://www.uniba.it/ricerca/dipartimenti/informatica/didattica/corsi-di-laurea/corsi-di-laurea"
-
-# url intent studenti stranieri
-URL_STUD_FOREIGN = "https://www.uniba.it/ricerca/dipartimenti/informatica/instructions-for-the-eligibility-for-the-master-degree-in-computer-science"
-
 # url intent raggiungimento
 URL_DIB_LOCATION = "https://www.uniba.it/ricerca/dipartimenti/informatica/dipartimento/come-raggiungerci"
 
-# url intent Laboratorio tesisti
-URL_LAB_GRAD = "https://www.uniba.it/ricerca/dipartimenti/informatica/manuzio/laboratorio-manuzio"
-
-# url intent Tirocinio
-URL_APPRENTICESHIP = "https://www.uniba.it/ricerca/dipartimenti/informatica/didattica/tirocini/tirocini-informatica"
-
-# url intent Erasmus+
-URL_ERASMUS = "https://www.uniba.it/ricerca/dipartimenti/informatica/didattica/erasmus/erasmus"
-
-# url intent Orientamento
-URL_UNI_RESEARCH = "https://www.uniba.it/ricerca/dipartimenti/informatica/tutorato/orientamento-e-tutorato-1"
-
 # url intent carta di identità
 URL_CIE = "https://www.comune.bari.it/web/egov/-/carta-d-identita-elettronica-cie-"
+
+# URL cambio di residenza
+URL_CR = "https://www.comune.bari.it/web/egov/-/cambio-di-residenza-con-provenienza-da-altro-comune-o-stato-estero-e-cambio-di-abitazione-bari-su-bari-"
 
 
 def parsing_html(url):
@@ -422,25 +392,25 @@ def webhooks():
 
     # intent del cambio di residenza (CR)
     elif query_result.get("intent").get("displayName") == "CR_INFO":
-        fulfillmentText = cie_scraping(URL_CIE, "INFO", None)
+        fulfillmentText = CR_scraping(URL_CR, "INFO", None)
     elif query_result.get("intent").get("displayName") == "CR_COSA":
-        fulfillmentText = cie_scraping(URL_CIE, None, "CR_COSA")
+        fulfillmentText = CR_scraping(URL_CR, None, "CR_COSA")
     elif query_result.get("intent").get("displayName") == "CR_COME":
-        fulfillmentText = cie_scraping(URL_CIE, None, "CR_COME")
+        fulfillmentText = CR_scraping(URL_CR, None, "CR_COME")
     elif query_result.get("intent").get("displayName") == "CR_DOCUMENTI":
-        fulfillmentText = cie_scraping(URL_CIE, "ALLEGARE", None)
+        fulfillmentText = CR_scraping(URL_CR, "ALLEGARE", None)
     elif query_result.get("intent").get("displayName") == "CR_STRANIERI":
-        fulfillmentText = cie_scraping(URL_CIE, "STRANIERI", None)
+        fulfillmentText = CR_scraping(URL_CR, "STRANIERI", None)
     elif query_result.get("intent").get("displayName") == "CR_MINORI":
-        fulfillmentText = cie_scraping(URL_CIE, "MINORI", None)
+        fulfillmentText = CR_scraping(URL_CR, "MINORI", None)
     elif query_result.get("intent").get("displayName") == "CR_DOVE":
-        fulfillmentText = cie_scraping(URL_CIE, None, "CR_DOVE")
+        fulfillmentText = CR_scraping(URL_CR, None, "CR_DOVE")
     elif query_result.get("intent").get("displayName") == "CR_COSTI":
-        fulfillmentText = cie_scraping(URL_CIE, None, "CR_COSTI")
+        fulfillmentText = CR_scraping(URL_CR, None, "CR_COSTI")
     elif query_result.get("intent").get("displayName") == "CR_TEMPI":
-        fulfillmentText = cie_scraping(URL_CIE, None, "CR_TEMPI")
+        fulfillmentText = CR_scraping(URL_CR, None, "CR_TEMPI")
     elif query_result.get("intent").get("displayName") == "CR_ALLEGATI":
-        fulfillmentText = cie_scraping(URL_CIE, None, "CR_ALLEGATI")
+        fulfillmentText = CR_scraping(URL_CR, None, "CR_ALLEGATI")
     # if fulfillmentText == "":
     #    fulfillmentText = "Ho ancora tanto da imparare, puoi ripetere?"
 

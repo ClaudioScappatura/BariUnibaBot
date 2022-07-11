@@ -606,8 +606,8 @@ def CDR_scraping(url, text, context):
 
     return fulfillmentText
 
-
-print(cie_scraping(URL_CIE, None, "CIE_TEMPI"))
+print(CR_scraping())
+#print(cie_scraping(URL_CIE, None, "CIE_TEMPI"))
 
 # print(cie_scraping(URL_CIE, None, "CDI_DOVE"))
 # print(cie_scraping(URL_CIE, "UFFICIO ANAGRAFE SAN PASQUALE", None))
