@@ -756,7 +756,7 @@ def SANZIONI_scraping(url, text, context):
                                             elif z.name == 'a':
                                                 if printText is True:  # PROBLEMA di stampa quando il tag es.'p' possiede del testo senza tag, poi la presenza di un tag es.strong e poi nuovamente testo senza tag. Verrà stampato il testo con ordine invertito
                                                     fulfillmentText += k.text.replace(str(z.text), "")
-                                                    fulfillmentText += z.text+" :\n"
+                                                    fulfillmentText += z.text + " :\n"
                                                     fulfillmentText += z["href"]
                                                     fulfillmentText += "\n"
 
@@ -793,9 +793,9 @@ def SANZIONI_scraping(url, text, context):
         for links in SANZ_Soup:
             fulfillmentText += ("\n" + links.text + ": \n - " + "https://www.comune.bari.it" + links["href"] + "\n")
 
-    #if context == "accordion_descrizione_servizio_13941714":
+    # if context == "accordion_descrizione_servizio_13941714":
     #    fulfillmentText += "- http://www.comune.bari.it/web/economia-tasse-e-tributi/tariffe-e-rapporti-con-gli" \
-                           #"-utenti-tari "
+    # "-utenti-tari "
 
     if context == "SANZ_DOVE":
         fulfillmentText = "CORPO DI POLIZIA MUNICIPALE\n\nNumero di telefono:\n080/5491331 Sala Operativa\n\nNumero di Email " \
@@ -812,11 +812,25 @@ def SANZIONI_scraping(url, text, context):
     return fulfillmentText
 
 
+URL_EVENT = "https://www.comune.bari.it/web/guest/eventi"
+
+
+def EVENT_scraping(url):
+    fulfillmentText = "\nGLI EVENTI:\n "
+    soup = parsing_html(url)
+    events = soup.findAll('div', class_="evento marginbottom10")
+    for event1 in events:
+        fulfillmentText += "\n" + event1.a["title"] + "\n" + event1.a["href"] + "\n"
+
+    return fulfillmentText
+
+
 # print(CDR_scraping(URL_CDR, None, "CDR_INFO"))
 # print(NEWS_scraping(URL_NEWS))
 # print(CDR_scraping(URL_CDR, None, "CDR_COSA"))
 # print(cie_scraping(URL_CIE, None, "CIE_TEMPI"))
-print(SANZIONI_scraping(URL_SANZ, None, "SANZ_DOVE"))
+# print(SANZIONI_scraping(URL_SANZ, None, "SANZ_DOVE"))
+print(EVENT_scraping(URL_EVENT))
 
 # print(cie_scraping(URL_CIE, "PORTALE CIE", None))
 # print(cie_scraping(URL_CIE, "UFFICIO ANAGRAFE SAN PASQUALE", None))

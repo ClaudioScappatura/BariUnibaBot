@@ -25,6 +25,9 @@ URL_NEWS = "https://www.comune.bari.it/web/guest/home"
 # URL pagamento sanzioni
 URL_SANZ = "https://www.comune.bari.it/web/egov/-/pagamento-delle-sanzioni-per-violazione-al-codice-della-strada-e-iscrizione-a-ruolo"
 
+# URL eventi
+URL_EVENT = "https://www.comune.bari.it/web/guest/eventi"
+
 
 def parsing_html(url):
     response = requests.get(url=url)
@@ -320,8 +323,9 @@ def TARI_scraping(url, text, context):
 
     return fulfillmentText
 
+
 # scraping sulle info inerenti alla TARI
-def SANZIONI_scraping(url, text, context):
+def SANZ_scraping(url, text, context):
     fulfillmentText = ""
     soup = parsing_html(url)
     printText = False
@@ -398,7 +402,7 @@ def SANZIONI_scraping(url, text, context):
                                             elif z.name == 'a':
                                                 if printText is True:  # PROBLEMA di stampa quando il tag es.'p' possiede del testo senza tag, poi la presenza di un tag es.strong e poi nuovamente testo senza tag. Verrà stampato il testo con ordine invertito
                                                     fulfillmentText += k.text.replace(str(z.text), "")
-                                                    fulfillmentText += z.text+" :\n"
+                                                    fulfillmentText += z.text + " :\n"
                                                     fulfillmentText += z["href"]
                                                     fulfillmentText += "\n"
 
@@ -443,6 +447,7 @@ def SANZIONI_scraping(url, text, context):
                           " - Tempi per pagamento delle sanzioni\n"
 
     return fulfillmentText
+
 
 # scraping sulle info inerenti al cambio di residenza
 def CR_scraping(url, text, context):
@@ -802,13 +807,22 @@ def NEWS_scraping(url):
     return fulfillmentText
 
 
+def EVENT_scraping(url):
+    fulfillmentText = "\nGLI EVENTI:\n "
+    soup = parsing_html(url)
+    events = soup.findAll('div', class_="evento marginbottom10")
+    for event1 in events:
+        fulfillmentText += "\n" + event1.a["title"] + "\n" + event1.a["href"] + "\n"
+
+    return fulfillmentText
+
+
 @app.route("/webhooks", methods=["POST"])
 def webhooks():
     req = request.get_json(silent=True, force=True)
     fulfillmentText = ""
     # processo la query che arriva in JSON
     query_result = req.get('queryResult')
-
 
     # intent della carta di identità (CIE)
     if query_result.get("intent").get("displayName") == "CIE_INFO":
@@ -902,8 +916,26 @@ def webhooks():
     elif query_result.get("intent").get("displayName") == "CDR_ESENZIONE":
         fulfillmentText = CDR_scraping(URL_CDR, "PAGAMENTO", None)
 
+    # intent sanzioni
+    elif query_result.get("intent").get("displayName") == "SANZ_COSA":
+        fulfillmentText = SANZ_scraping(URL_SANZ, None, "SANZ_COSA")
+    elif query_result.get("intent").get("displayName") == "SANZ_COME":
+        fulfillmentText = SANZ_scraping(URL_SANZ, None, "SANZ_COME")
+    elif query_result.get("intent").get("displayName") == "SANZ_INFO":
+        fulfillmentText = SANZ_scraping(URL_SANZ, None, "SANZ_INFO")
+    elif query_result.get("intent").get("displayName") == "SANZ_COSTI":
+        fulfillmentText = SANZ_scraping(URL_SANZ, None, "SANZ_COSTI")
+    elif query_result.get("intent").get("displayName") == "SANZ_TEMPI":
+        fulfillmentText = SANZ_scraping(URL_SANZ, None, "SANZ_TEMPI")
+    elif query_result.get("intent").get("displayName") == "SANZ_DOVE":
+        fulfillmentText = SANZ_scraping(URL_SANZ, None, "SANZ_DOVE")
+
     # intent news
     elif query_result.get("intent").get("displayName") == "NEWS":
+        fulfillmentText = NEWS_scraping(URL_NEWS)
+
+    # intent events
+    elif query_result.get("intent").get("displayName") == "EVENT":
         fulfillmentText = NEWS_scraping(URL_NEWS)
 
     # if fulfillmentText == "":
