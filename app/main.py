@@ -170,11 +170,7 @@ def cie_scraping(url, text, context):
                               "13.00 e 16.00 - 17.30\nVenerdì : 9.00 - 12.30\nSabato : chiuso\n\nIndirizzo : Via " \
                               "Luigi Pinto,3 70125 Bari "
 
-    token = "5489998677:AAHBmuuy7Y2eZVphBibCaTltd3-AOnMD9vA"
-    urlUpdates = "https://api.telegram.org/bot5430259949:AAFWM6G3Nma71fS8SkoeVOQ-Fw_XrSaaVRQ/getUpdates"
-    req2 = requests.get(urlUpdates).json()
-    chat_id = req2['result'][0]['message']['from']['id']
-
+    chat_id = 575403880
     token = '5430259949:AAFWM6G3Nma71fS8SkoeVOQ-Fw_XrSaaVRQ'
     msg = "Send text with photo 😉"
     img_uri = "https://www.ixbt.com/img/n1/news/2022/3/1/62342d1404eb2_large.jpg"
