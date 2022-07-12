@@ -28,6 +28,9 @@ URL_SANZ = "https://www.comune.bari.it/web/egov/-/pagamento-delle-sanzioni-per-v
 # URL eventi
 URL_EVENT = "https://www.comune.bari.it/web/guest/eventi"
 
+# URL per APP comunali
+URL_APPS = "https://www.comune.bari.it/web/egov"
+
 
 def parsing_html(url):
     response = requests.get(url=url)
@@ -817,6 +820,68 @@ def EVENT_scraping(url):
     return fulfillmentText
 
 
+def APP_scraping(url, app_name):
+    if app_name is not None:
+        match app_name:
+            case "MUVT":
+                app_name = "MUVT"
+            case "BARIAIUTA":
+                app_name = "BariAiuta"
+            case "TUPASSI":
+                app_name = "TuPassi"
+            case "INFOSMARTCITY":
+                app_name = "InfoSmartCity"
+            case "BARISOLVE":
+                app_name = "BaRisolve"
+            case "BARISOCIAL":
+                app_name = "Bari Social"
+            case "BARINFORMA":
+                app_name = "BARInforma"
+
+    fulfillmentText = ""
+    soupApps = parsing_html(url)
+    apps = soupApps.findAll('div', class_="span12 bg-f9f9f9 padding20")
+    for app1 in apps:
+        for app2 in app1.findAll('a'):
+            if app2["title"] not in fulfillmentText:
+                if app_name is None:
+                    printText = True
+                else:
+                    printText = False
+
+                if app2["title"] == app_name or printText is True:
+                    # fulfillmentText += "\n - "
+                    fulfillmentText += " - " + app2["title"]
+                    fulfillmentText += "\n"
+                    fulfillmentText += app2["href"]
+                    fulfillmentText += "\n"
+                    if app_name is not None:
+                        # prendo le descrizioni da pagina dedicata ad app
+                        soupApps = parsing_html(app2["href"])
+                        app3 = soupApps.find('div', class_="strutturacobari strutturaschedaapp")
+                        app4 = app3.find('div', class_="span12")
+                        app5 = app4.findAll('div', class_="span12")
+                        for app6 in app5:
+                            if len(app6.text) > 30:
+                                fulfillmentText += app6.text
+                                fulfillmentText += "\n"
+                        links = soupApps.findAll("div", class_="span12 marginbottom10 text-center")
+                        for store in links:
+                            for store2 in store.findAll('a'):
+                                if store2["href"] is not None and "apple" in store2["href"]:
+                                    fulfillmentText += "\nDownload app on the APP STORE (Iphone):\n"
+                                    fulfillmentText += store2["href"]
+                                elif store2["href"] is not None and "google" in store2["href"]:
+                                    fulfillmentText += "\nDownload app on GOOGLE PLAY STORE (Android):\n"
+                                    fulfillmentText += store2["href"]
+
+                    fulfillmentText += "\n"
+                    printText = False
+
+    fulfillmentText = re.sub("\. ", ".\n", fulfillmentText)
+    return fulfillmentText
+
+
 @app.route("/webhooks", methods=["POST"])
 def webhooks():
     req = request.get_json(silent=True, force=True)
@@ -937,6 +1002,9 @@ def webhooks():
     # intent events
     elif query_result.get("intent").get("displayName") == "EVENT":
         fulfillmentText = NEWS_scraping(URL_NEWS)
+
+    # intent apps
+    
 
     # if fulfillmentText == "":
     #    fulfillmentText = "Ho ancora tanto da imparare, puoi ripetere?"
