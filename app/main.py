@@ -22,6 +22,9 @@ URL_CDR = "https://www.comune.bari.it/web/egov/-/certificato-di-residenza"
 # URL notizie
 URL_NEWS = "https://www.comune.bari.it/web/guest/home"
 
+# URL pagamento sanzioni
+URL_SANZ = "https://www.comune.bari.it/web/egov/-/pagamento-delle-sanzioni-per-violazione-al-codice-della-strada-e-iscrizione-a-ruolo"
+
 
 def parsing_html(url):
     response = requests.get(url=url)
@@ -317,6 +320,129 @@ def TARI_scraping(url, text, context):
 
     return fulfillmentText
 
+# scraping sulle info inerenti alla TARI
+def SANZIONI_scraping(url, text, context):
+    fulfillmentText = ""
+    soup = parsing_html(url)
+    printText = False
+
+    if text is not None:
+        # flag per la gestione delle stampe
+        printText = False
+    elif context is not None:
+        match context:
+            case "SANZ_COSA":
+                # COSA della Tari
+                context = "accordion_descrizione_servizio_SCHEDA_SERVIZIO_IMPORTED_8838"
+            case "SANZ_COME":
+                # COME della TARI
+                context = "accordion_come_SCHEDA_SERVIZIO_IMPORTED_8838"
+            case "SANZ_COSTI":
+                # COSTI della Tari
+                context = "accordion_costi_SCHEDA_SERVIZIO_IMPORTED_8838"
+            case "SANZ_TEMPI":  # da implementare poiche dinamico
+                # TEMPI della Taro
+                context = "accordion_tempi_SCHEDA_SERVIZIO_IMPORTED_8838"
+            case "SANZ_ALLEGATI":
+                allegati = True
+    else:  # se text e context sono nulli, stampa tutte le informazioni in pagina
+        printText = True
+
+        SANZ_Soup = soup.findAll('div', class_="accordion-body collapse in")
+        # se la variabile text è vuota, stampa tutte le info riguardo la CDI, altrimenti
+        # ricerca tutti i DIV di quella classe
+        for i in SANZ_Soup:
+            if context is not None:
+                if i["id"] == context:
+                    printText = True
+                else:
+                    printText = False
+            try:
+                # analizza il primo figlio di ogni DIV trovato (il primo figlio sarà un altro DIV
+                for t in i.children:
+                    try:
+                        if len(t.findAll()) == 0 and printText is True:
+                            fulfillmentText += t.text
+                            fulfillmentText += "\n"
+                        # è la lista dei figli del secondo DIV
+                        for k in t.children:
+                            if k.name is not None:
+                                # verifica sul numero di figli
+                                has_child = len(k.findAll()) != 0
+                                # se il tag ha figli allora cerca e stampa i figli
+                                if has_child:
+                                    # è la lista di figli di ogni TAG all'interno di DIV
+                                    for z in k.children:
+                                        if z.name is not None:
+                                            # se è una scritta in stampatello senza tag che la precedono allora la stampo, la tolgo dal tag superiore, stampo il testo del tag padre e vado a capo
+                                            if z.text.isupper() and len(
+                                                    z.findPreviousSiblings()) == 0 and z.text != "N.B.":
+                                                if context is None:
+                                                    if text is not None:
+                                                        if text in z.text:
+                                                            printText = True
+                                                        else:
+                                                            printText = False
+                                                    else:
+                                                        printText = True
+                                                if printText is True:
+                                                    fulfillmentText += "\n"
+                                                    fulfillmentText += z.text
+                                                    # se il titolo in maiuscolo contiene fratelli all'interno dello stesso TAG, allora mette uno spazio per andare a capo
+                                                    if len(z.findNextSiblings()) != 0:
+                                                        fulfillmentText += "\n"
+                                                    fulfillmentText += k.text.replace(str(z.text), "")
+                                                    fulfillmentText += "\n"
+                                                    break  # esco per evitare duplicati
+
+                                            elif z.name == 'a':
+                                                if printText is True:  # PROBLEMA di stampa quando il tag es.'p' possiede del testo senza tag, poi la presenza di un tag es.strong e poi nuovamente testo senza tag. Verrà stampato il testo con ordine invertito
+                                                    fulfillmentText += k.text.replace(str(z.text), "")
+                                                    fulfillmentText += z.text+" :\n"
+                                                    fulfillmentText += z["href"]
+                                                    fulfillmentText += "\n"
+
+                                            # se il tag è 'li' (elenco puntato), allora metti un a capo
+                                            elif z.name == "li" and printText is True:
+                                                fulfillmentText += "- "
+                                                fulfillmentText += z.text
+                                                fulfillmentText += "\n"
+                                            # se il tag non ha fratelli precedenti e successivi, allora stampa prima il testo del padre e poi il proprio (ESCLUSIONE DUPLICATI)
+                                            elif len(z.findPreviousSiblings()) == 0 and len(z.findNextSiblings()) == 0:
+                                                if printText is True:  # PROBLEMA di stampa quando il tag es.'p' possiede del testo senza tag, poi la presenza di un tag es.strong e poi nuovamente testo senza tag. Verrà stampato il testo con ordine invertito
+                                                    fulfillmentText += k.text.replace(str(z.text), "")
+                                                    fulfillmentText += z.text
+                                                    fulfillmentText += "\n"
+                                            else:  # se il tag ha più figli che però non rientrano in uno dei casi particolari precedenti, allora stampa il padre
+                                                if printText is True:
+                                                    fulfillmentText += k.text
+                                                    fulfillmentText += "\n"
+                                                    break  # evita duplicati
+
+
+                                # se il tag non ha figli, stampa il suo testo
+                                else:
+                                    if printText is True:
+                                        fulfillmentText += k.text
+                                        fulfillmentText += "\n"
+                    except:
+                        continue
+            except:
+                continue
+
+    if context == "SANZ_DOVE":
+        fulfillmentText = "CORPO DI POLIZIA MUNICIPALE\n\nNumero di telefono:\n080/5491331 Sala Operativa\n\nNumero di Email " \
+                          "PEC:\npoliziamunicipale.comunebari@pec.rupar.puglia.it\n\nPosta " \
+                          "elettronica:\nrip.poliziamunicipale@comune.bari.it\n\nORARI DI APERTURA:\nLunedì: 9.00 - " \
+                          "12.00\nMartedì : 9.00 - 12.00\nMercoledì : 9.00 - 12.00\nGiovedì : 9.00 - " \
+                          "12.00\nVenerdì : 9.00 - 12.00\nSabato : 9.00 - 12.00\n\nIndirizzo : Via Paolo Aquilino," \
+                          "1 70126 Bari "
+    if context == "SANZ_INFO":
+        fulfillmentText = "Cosa ti interessa sapere sulle sanzioni/multe?\n - Cosa sono le sanzioni\n - Come " \
+                          "pagare le sanzioni\n - Posizione/Orari uffici Polizia\n - Costo delle sanzioni\n" \
+                          " - Tempi per pagamento delle sanzioni\n"
+
+    return fulfillmentText
 
 # scraping sulle info inerenti al cambio di residenza
 def CR_scraping(url, text, context):
