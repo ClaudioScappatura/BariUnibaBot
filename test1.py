@@ -3,7 +3,7 @@ import unicodedata
 from bs4 import BeautifulSoup
 import re
 import requests
-from aiogram import Bot, Dispatcher, executor, types
+import json
 from flask import Flask, request
 
 # URL Carta di identità elettronica
@@ -650,6 +650,10 @@ def CR_replace(fulfillmentText):
 
 
 def NEWS_scraping(url):
+    urlUpdates = "https://api.telegram.org/bot5430259949:AAFWM6G3Nma71fS8SkoeVOQ-Fw_XrSaaVRQ/getUpdates"
+    req2 = requests.get(urlUpdates).json()
+    chat_id = req2['result'][0]['message']['from']['id']
+    print(chat_id)
 
     fulfillmentText = "\nLE NOTIZIE:\n "
     soup = parsing_html(url)

@@ -671,9 +671,22 @@ def NEWS_scraping(url):
 def webhooks():
     req = request.get_json(silent=True, force=True)
     fulfillmentText = ""
-
     # processo la query che arriva in JSON
     query_result = req.get('queryResult')
+
+    token = "5489998677:AAHBmuuy7Y2eZVphBibCaTltd3-AOnMD9vA"
+    urlUpdates = "https://api.telegram.org/bot5430259949:AAFWM6G3Nma71fS8SkoeVOQ-Fw_XrSaaVRQ/getUpdates"
+    req2 = requests.get(urlUpdates).json()
+    chat_id = req2['result'][0]['message']['from']['id']
+
+    token = '5430259949:AAFWM6G3Nma71fS8SkoeVOQ-Fw_XrSaaVRQ'
+    msg = "Send text with photo 😉"
+    img_uri = "https://www.ixbt.com/img/n1/news/2022/3/1/62342d1404eb2_large.jpg"
+    telegram_msg = requests.get(
+        f'https://api.telegram.org/bot{token}/sendPhoto?chat_id={chat_id}&caption={msg}&photo={img_uri}')
+    print(telegram_msg)
+    print(telegram_msg.content)
+
 
     # intent della carta di identità (CIE)
     if query_result.get("intent").get("displayName") == "CIE_INFO":
