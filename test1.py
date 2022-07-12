@@ -809,6 +809,7 @@ def SANZIONI_scraping(url, text, context):
                           "pagare le sanzioni\n - Posizione/Orari uffici Polizia\n - Costo delle sanzioni\n" \
                           " - Tempi per pagamento delle sanzioni\n"
 
+    print(len(fulfillmentText))
     return fulfillmentText
 
 
@@ -895,9 +896,9 @@ def APP_scraping(url, app_name):
 # print(NEWS_scraping(URL_NEWS))
 # print(CDR_scraping(URL_CDR, None, "CDR_COSA"))
 # print(cie_scraping(URL_CIE, None, "CIE_TEMPI"))
-# print(SANZIONI_scraping(URL_SANZ, None, "SANZ_DOVE"))
+print(SANZIONI_scraping(URL_SANZ, None, "SANZ_COME"))
 # print(EVENT_scraping(URL_EVENT))
-print(APP_scraping(URL_APPS, "BARISOCIAL"))
+# print(APP_scraping(URL_APPS, "BARISOCIAL"))
 
 # print(cie_scraping(URL_CIE, "PORTALE CIE", None))
 # print(cie_scraping(URL_CIE, "UFFICIO ANAGRAFE SAN PASQUALE", None))

@@ -327,12 +327,14 @@ def TARI_scraping(url, text, context):
     return fulfillmentText
 
 
-# scraping sulle info inerenti alla TARI
+# scraping sulle info sulle multe
 def SANZ_scraping(url, text, context):
     fulfillmentText = ""
     soup = parsing_html(url)
     printText = False
 
+    # flag utile per la gestione degli allegati
+    allegati = False
     if text is not None:
         # flag per la gestione delle stampe
         printText = False
@@ -355,6 +357,7 @@ def SANZ_scraping(url, text, context):
     else:  # se text e context sono nulli, stampa tutte le informazioni in pagina
         printText = True
 
+    if allegati is False:
         SANZ_Soup = soup.findAll('div', class_="accordion-body collapse in")
         # se la variabile text è vuota, stampa tutte le info riguardo la CDI, altrimenti
         # ricerca tutti i DIV di quella classe
@@ -436,6 +439,15 @@ def SANZ_scraping(url, text, context):
                         continue
             except:
                 continue
+    else:
+        # stampa tutti i dati inerenti ai moduli per cambio di residenza
+        SANZ_Soup = soup.findAll('a', class_="inverted-link")
+        for links in SANZ_Soup:
+            fulfillmentText += ("\n" + links.text + ": \n - " + "https://www.comune.bari.it" + links["href"] + "\n")
+
+    # if context == "accordion_descrizione_servizio_13941714":
+    #    fulfillmentText += "- http://www.comune.bari.it/web/economia-tasse-e-tributi/tariffe-e-rapporti-con-gli" \
+    # "-utenti-tari "
 
     if context == "SANZ_DOVE":
         fulfillmentText = "CORPO DI POLIZIA MUNICIPALE\n\nNumero di telefono:\n080/5491331 Sala Operativa\n\nNumero di Email " \
@@ -1004,7 +1016,7 @@ def webhooks():
         fulfillmentText = NEWS_scraping(URL_NEWS)
 
     # intent apps
-    
+
 
     # if fulfillmentText == "":
     #    fulfillmentText = "Ho ancora tanto da imparare, puoi ripetere?"
