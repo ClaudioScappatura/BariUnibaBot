@@ -916,7 +916,7 @@ def APP_scraping(url, app_name):
                 fulfillmentText += app2["href"]
                 fulfillmentText += "\n"
                 if app_name is not None:
-                    # prendo le descrizioni da pagina dedicata ad app
+                     # prendo le descrizioni da pagina dedicata ad app
                 #    soupApps = parsing_html(app2["href"])
                 #    app3 = soupApps.find('div', class_="strutturacobari strutturaschedaapp")
                 #    app4 = app3.find('div', class_="span12")
