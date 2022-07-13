@@ -659,7 +659,15 @@ def NEWS_scraping(url):
     notices = soup.findAll('div', class_="notizia padding10")
     for news1 in notices:
         fulfillmentText += "\n" + news1.a["title"] + "\n" + news1.a["href"] + "\n"
-
+    """
+    token = '5430259949:AAFWM6G3Nma71fS8SkoeVOQ-Fw_XrSaaVRQ'
+    msg = "Send text with FOTOOOO 😉"
+    img_uri = "https://www.ixbt.com/img/n1/news/2022/3/1/62342d1404eb2_large.jpg"
+    telegram_msg = requests.get(
+        f'https://api.telegram.org/bot{token}/sendPhoto?chat_id={chat_id}&caption={msg}&photo={img_uri}')
+    print(telegram_msg)
+    print(telegram_msg.content)
+    """
     return fulfillmentText
 
 

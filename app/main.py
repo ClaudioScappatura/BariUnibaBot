@@ -885,7 +885,7 @@ def EVENT_scraping(category):
 
     return fulfillmentText
 
-
+"""
 def APP_scraping(url, app_name):
     if app_name is not None:
         match app_name:
@@ -958,20 +958,7 @@ def APP_scraping(url, app_name):
         fulfillmentText = "\nCosa vuoi sapere riguardo le App?\n\n - Tutte le app di Bari\n - Una specifica app di Bari"
 
     return fulfillmentText
-
-
-def provaTelegram(request_pay):
-    #token = "5489998677:AAHBmuuy7Y2eZVphBibCaTltd3-AOnMD9vA"
-    telegramPayload = request_pay['originalDetectIntentRequest']['payload']
-    chat_id = telegramPayload['data'][0]['chat']['id']
-    token = '5430259949:AAFWM6G3Nma71fS8SkoeVOQ-Fw_XrSaaVRQ'
-    msg = "Send text with FOTOOOO 😉"
-    img_uri = "https://www.ixbt.com/img/n1/news/2022/3/1/62342d1404eb2_large.jpg"
-    telegram_msg = requests.get(
-        f'https://api.telegram.org/bot{token}/sendPhoto?chat_id={chat_id}&caption={msg}&photo={img_uri}')
-    print(telegram_msg)
-    print(telegram_msg.content)
-
+"""
 
 @app.route("/webhooks", methods=["POST"])
 def webhooks():
@@ -979,7 +966,7 @@ def webhooks():
     fulfillmentText = ""
     # processo la query che arriva in JSON
     query_result = req.get('queryResult')
-    #provaTelegram(req)
+
     # intent della carta di identità (CIE)
     if query_result.get("intent").get("displayName") == "CIE_INFO":
         fulfillmentText = cie_scraping(URL_CIE, "INFO", None)
@@ -1116,7 +1103,7 @@ def webhooks():
     # intent info event
     elif query_result.get("intent").get("displayName") == "EVENT_INFO":
         fulfillmentText = EVENT_scraping("EVENT_INFO")
-
+    """
     # intent APPS
     elif query_result.get("intent").get("displayName") == "APP":
         if query_result["parameters"]["MUVT"] != "":
@@ -1133,11 +1120,11 @@ def webhooks():
             fulfillmentText = APP_scraping(URL_APPS, "BARINFORMA")
         else:
             fulfillmentText = APP_scraping(URL_APPS, None)
-
+    
     # intent info app
     elif query_result.get("intent").get("displayName") == "APP_INFO":
         fulfillmentText = APP_scraping(URL_APPS, "APP_INFO")
-
+    """
     # if fulfillmentText == "":
     #    fulfillmentText = "Ho ancora tanto da imparare, puoi ripetere?"
 
@@ -1148,7 +1135,7 @@ def webhooks():
         "source": "webhookdata"
     }
 
-
+"""
 soupApps = parsing_html(URL_APPS)
 apps = soupApps.find('div', class_="span12 bg-f9f9f9 padding20")
 muvt = parsing_html(
@@ -1165,5 +1152,5 @@ tuPassi = parsing_html(
     "https://www.comune.bari.it/web/egov/home/-/asset_publisher/43CuEMaJc6ZV/content/tupassi/20181?inheritRedirect=false&redirect=https%3A%2F%2Fwww.comune.bari.it%2Fweb%2Fegov%2Fhome%3Fp_p_id%3D101_INSTANCE_43CuEMaJc6ZV%26p_p_lifecycle%3D0%26p_p_state%3Dnormal%26p_p_mode%3Dview%26p_p_col_id%3Dcolumn-4%26p_p_col_count%3D1")
 bariAiuta = parsing_html(
     "https://www.comune.bari.it/web/egov/home/-/asset_publisher/43CuEMaJc6ZV/content/bariaiuta/20181?inheritRedirect=false&redirect=https%3A%2F%2Fwww.comune.bari.it%2Fweb%2Fegov%2Fhome%3Fp_p_id%3D101_INSTANCE_43CuEMaJc6ZV%26p_p_lifecycle%3D0%26p_p_state%3Dnormal%26p_p_mode%3Dview%26p_p_col_id%3Dcolumn-4%26p_p_col_count%3D1")
-
+"""
 # app.run(debug=True, port=5000)
