@@ -1085,13 +1085,13 @@ def webhooks():
 
     # intent APPS
     elif query_result.get("intent").get("displayName") == "APP":
-        if len(query_result["parameters"]["MUVT"]) > 3:
+        if query_result["parameters"]["MUVT"] != "[]":
             fulfillmentText = APP_scraping(URL_APPS, "MUVT", apps)
         elif query_result["parameters"]["BARIAIUTA"] != "":
             fulfillmentText = APP_scraping(URL_APPS, "BARIAIUTA", apps)
         elif query_result["parameters"]["TUPASSI"] != "":
             fulfillmentText = APP_scraping(URL_APPS, "TUPASSI", apps)
-        elif len(query_result["parameters"]["INFOSMARTCITY"]) > 3:
+        elif query_result["parameters"]["INFOSMARTCITY"] != "[]":
             fulfillmentText = APP_scraping(URL_APPS, "INFOSMARTCITY", apps)
         elif query_result["parameters"]["BARISOCIAL"] != "":
             fulfillmentText = APP_scraping(URL_APPS, "BARISOCIAL", apps)
