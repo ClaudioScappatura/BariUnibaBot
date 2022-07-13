@@ -1053,23 +1053,23 @@ def webhooks():
     # intent events
     elif query_result.get("intent").get("displayName") == "EVENT":
         if query_result["parameters"]["ArteMostre"] != "":
-            fulfillmentText = NEWS_scraping("ArteMostre")
+            fulfillmentText = EVENT_scraping("ArteMostre")
         elif query_result["parameters"]["Cinema"] != "":
-            fulfillmentText = NEWS_scraping("Cinema")
+            fulfillmentText = EVENT_scraping("Cinema")
         elif query_result["parameters"]["FieraConvegni"] != "":
-            fulfillmentText = NEWS_scraping("FieraConvegni")
+            fulfillmentText = EVENT_scraping("FieraConvegni")
         elif query_result["parameters"]["Musica"] != "":
-            fulfillmentText = NEWS_scraping("Musica")
+            fulfillmentText = EVENT_scraping("Musica")
         elif query_result["parameters"]["Musica"] != "":
-            fulfillmentText = NEWS_scraping("Musica")
+            fulfillmentText = EVENT_scraping("Musica")
         elif query_result["parameters"]["SpettacoliDanza"] != "":
-            fulfillmentText = NEWS_scraping("SpettacoliDanza")
+            fulfillmentText = EVENT_scraping("SpettacoliDanza")
         elif query_result["parameters"]["Sport"] != "":
-            fulfillmentText = NEWS_scraping("Sport")
+            fulfillmentText = EVENT_scraping("Sport")
         elif query_result["parameters"]["Teatro"] != "":
-            fulfillmentText = NEWS_scraping("Teatro")
+            fulfillmentText = EVENT_scraping("Teatro")
         elif query_result["parameters"]["Online"] != "":
-            fulfillmentText = NEWS_scraping("Online")
+            fulfillmentText = EVENT_scraping("Online")
 
 
 
