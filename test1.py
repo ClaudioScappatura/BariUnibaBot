@@ -860,7 +860,15 @@ def EVENT_scraping(category):
 
     for event1 in events:
         fulfillmentText += "\n" + event1.a["title"] + "\n" + event1.a["href"] + "\n"
+        for event2 in event1.findAll('span', class_="marginright5"):
+            fulfillmentText += event2.text+" "
+            event3 = event2.find_next_sibling()
+            if event3 is not None:
+                if len(event3.findAll()) == 0:
+                    fulfillmentText += " "+event3.text
+        fulfillmentText += "\n"
 
+    fulfillmentText = re.sub("Presso ", "\nPresso ", fulfillmentText)
     return fulfillmentText
 
 
