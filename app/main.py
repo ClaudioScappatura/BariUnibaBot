@@ -1083,6 +1083,22 @@ def webhooks():
         else:
             fulfillmentText = EVENT_scraping(None)
 
+    # intent APPS
+    elif query_result.get("intent").get("displayName") == "APP":
+        if query_result["parameters"]["MUVT"] != "":
+            fulfillmentText = APP_scraping(URL_APPS, "MUVT")
+        elif query_result["parameters"]["BARIAIUTA"] != "":
+            fulfillmentText = APP_scraping(URL_APPS, "BARIAIUTA")
+        elif query_result["parameters"]["TUPASSI"] != "":
+            fulfillmentText = APP_scraping(URL_APPS, "TUPASSI")
+        elif query_result["parameters"]["INFOSMARTCITY"] != "":
+            fulfillmentText = APP_scraping(URL_APPS, "INFOSMARTCITY")
+        elif query_result["parameters"]["BARISOCIAL"] != "":
+            fulfillmentText = APP_scraping(URL_APPS, "BARISOCIAL")
+        elif query_result["parameters"]["BARINFORMA"] != "":
+            fulfillmentText = APP_scraping(URL_APPS, "BARINFORMA")
+        else:
+            fulfillmentText = APP_scraping(URL_APPS, None)
 
 
     # if fulfillmentText == "":

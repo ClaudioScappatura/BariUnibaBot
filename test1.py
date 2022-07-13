@@ -883,6 +883,7 @@ URL_APPS = "https://www.comune.bari.it/web/egov"
 
 
 def APP_scraping(url, app_name):
+
     if app_name is not None:
         match app_name:
             case "MUVT":
