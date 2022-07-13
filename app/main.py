@@ -869,11 +869,11 @@ def EVENT_scraping(category):
         for event2 in event1.findAll('span', class_="marginright5"):
             print(event2.text)
             if "2010" not in event2.text and "2011" not in event2.text and "2012" not in event2.text and "2013" not in event2.text and "2014" not in event2.text and "2015" not in event2.text and "2016" not in event2.text and "2017" not in event2.text and "2018" not in event2.text and "2019" not in event2.text and "2020" not in event2.text and "2021" not in event2.text and "2022" not in event2.text and "2023" not in event2.text:
-                fulfillmentText += " "+event2.text
+                fulfillmentText += " " + event2.text
             event3 = event2.find_next_sibling()
             if event3 is not None:
                 if len(event3.findAll()) == 0 and re.search(event2.text, event3.text) is None:
-                    fulfillmentText += " "+event3.text
+                    fulfillmentText += " " + event3.text
 
         fulfillmentText += "\n"
 
@@ -881,7 +881,7 @@ def EVENT_scraping(category):
     return fulfillmentText
 
 
-def APP_scraping(url, app_name):
+def APP_scraping(url, app_name, apps):
     if app_name is not None:
         match app_name:
             case "MUVT":
@@ -900,8 +900,8 @@ def APP_scraping(url, app_name):
                 app_name = "BARInforma"
 
     fulfillmentText = ""
-    soupApps = parsing_html(url)
-    apps = soupApps.find('div', class_="span12 bg-f9f9f9 padding20")
+    # soupApps = parsing_html(url)
+    # apps = soupApps.find('div', class_="span12 bg-f9f9f9 padding20")
 
     for app2 in apps.findAll('a'):
         if app2["title"] not in fulfillmentText:
@@ -1085,21 +1085,20 @@ def webhooks():
 
     # intent APPS
     elif query_result.get("intent").get("displayName") == "APP":
-        if len(query_result["parameters"]["MUVT"]) > 4:
-            fulfillmentText = APP_scraping(URL_APPS, "MUVT")
+        if len(query_result["parameters"]["MUVT"]) > 3:
+            fulfillmentText = APP_scraping(URL_APPS, "MUVT", apps)
         elif query_result["parameters"]["BARIAIUTA"] != "":
-            fulfillmentText = APP_scraping(URL_APPS, "BARIAIUTA")
+            fulfillmentText = APP_scraping(URL_APPS, "BARIAIUTA", apps)
         elif query_result["parameters"]["TUPASSI"] != "":
-            fulfillmentText = APP_scraping(URL_APPS, "TUPASSI")
-        elif query_result["parameters"]["INFOSMARTCITY"] != "" and query_result["parameters"]["INFOSMARTCITY"] != "[]":
-            fulfillmentText = APP_scraping(URL_APPS, "INFOSMARTCITY")
+            fulfillmentText = APP_scraping(URL_APPS, "TUPASSI", apps)
+        elif len(query_result["parameters"]["INFOSMARTCITY"]) > 3:
+            fulfillmentText = APP_scraping(URL_APPS, "INFOSMARTCITY", apps)
         elif query_result["parameters"]["BARISOCIAL"] != "":
-            fulfillmentText = APP_scraping(URL_APPS, "BARISOCIAL")
+            fulfillmentText = APP_scraping(URL_APPS, "BARISOCIAL", apps)
         elif query_result["parameters"]["BARINFORMA"] != "":
-            fulfillmentText = APP_scraping(URL_APPS, "BARINFORMA")
+            fulfillmentText = APP_scraping(URL_APPS, "BARINFORMA", apps)
         else:
-            fulfillmentText = APP_scraping(URL_APPS, None)
-
+            fulfillmentText = APP_scraping(URL_APPS, None, apps)
 
     # if fulfillmentText == "":
     #    fulfillmentText = "Ho ancora tanto da imparare, puoi ripetere?"
@@ -1110,5 +1109,9 @@ def webhooks():
         "displayText": '25',
         "source": "webhookdata"
     }
+
+
+soupApps = parsing_html(URL_APPS)
+apps = soupApps.find('div', class_="span12 bg-f9f9f9 padding20")
 
 # app.run(debug=True, port=5000)
