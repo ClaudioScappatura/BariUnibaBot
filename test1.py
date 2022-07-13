@@ -813,17 +813,58 @@ def SANZIONI_scraping(url, text, context):
     return fulfillmentText
 
 
-URL_EVENT = "https://www.comune.bari.it/web/guest/eventi"
+URL_EVENT = "https://www.comune.bari.it"
 
 
-def EVENT_scraping(url):
-    fulfillmentText = "\nGLI EVENTI:\n "
+def EVENT_scraping(category):
+    url = URL_EVENT
+    categoryStamp = ""
+    if category is not None:
+        match category:
+            case "Musica":
+                url += "/musica"
+                categoryStamp = "MUSICA"
+            case "Cinema":
+                url += "/cinema"
+                categoryStamp = "CINEMA"
+            case "Teatro":
+                url += "/teatro"
+                categoryStamp = "TEATRO"
+            case "Sport":
+                url += "/sport"
+                categoryStamp = "SPORT"
+            case "SpettacoliDanza":
+                url += "/spettacoli-e-danza"
+                categoryStamp = "SPETTACOLI E DANZA"
+            case "FieraConvegni":
+                url += "/fiera-e-convegni"
+                categoryStamp = "FIERA E CONVEGNI"
+            case "ArteMostre":
+                url += "/arte-e-mostre"
+                categoryStamp = "ARTE E MOSTRE"
+            case "Online":
+                url += "/eventi-online"
+                categoryStamp = "ONLINE"
+    else:
+        url += "/eventi"
+
     soup = parsing_html(url)
+
+    fulfillmentText = "\nTUTTI GLI EVENTI "
+    if category is not None:
+        fulfillmentText += "della categoria " + categoryStamp + ":\n"
+    else:
+        fulfillmentText += "di qualunque categoria:\n"
+
     events = soup.findAll('div', class_="evento marginbottom10")
+
     for event1 in events:
         fulfillmentText += "\n" + event1.a["title"] + "\n" + event1.a["href"] + "\n"
 
     return fulfillmentText
+
+
+print(EVENT_scraping(None))
 
 # URL per APP comunali
 URL_APPS = "https://www.comune.bari.it/web/egov"
@@ -891,13 +932,11 @@ def APP_scraping(url, app_name):
     fulfillmentText = re.sub("\. ", ".\n", fulfillmentText)
     return fulfillmentText
 
-
 # print(CDR_scraping(URL_CDR, None, "CDR_INFO"))
 # print(NEWS_scraping(URL_NEWS))
 # print(CDR_scraping(URL_CDR, None, "CDR_COSA"))
 # print(cie_scraping(URL_CIE, None, "CIE_TEMPI"))
-print(SANZIONI_scraping(URL_SANZ, None, "SANZ_COME"))
-# print(EVENT_scraping(URL_EVENT))
+# print(SANZIONI_scraping(URL_SANZ, None, "SANZ_COME"))
 # print(APP_scraping(URL_APPS, "BARISOCIAL"))
 
 # print(cie_scraping(URL_CIE, "PORTALE CIE", None))

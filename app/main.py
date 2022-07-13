@@ -26,7 +26,7 @@ URL_NEWS = "https://www.comune.bari.it/web/guest/home"
 URL_SANZ = "https://www.comune.bari.it/web/egov/-/pagamento-delle-sanzioni-per-violazione-al-codice-della-strada-e-iscrizione-a-ruolo"
 
 # URL eventi
-URL_EVENT = "https://www.comune.bari.it/web/guest/eventi"
+URL_EVENT = "https://www.comune.bari.it"
 
 # URL per APP comunali
 URL_APPS = "https://www.comune.bari.it/web/egov"
@@ -822,14 +822,53 @@ def NEWS_scraping(url):
     return fulfillmentText
 
 
-def EVENT_scraping(url):
-    fulfillmentText = "\nGLI EVENTI:\n "
+def EVENT_scraping(category):
+    url = URL_EVENT
+    categoryStamp = ""
+    if category is not None:
+        match category:
+            case "Musica":
+                url += "/musica"
+                categoryStamp = "MUSICA"
+            case "Cinema":
+                url += "/cinema"
+                categoryStamp = "CINEMA"
+            case "Teatro":
+                url += "/teatro"
+                categoryStamp = "TEATRO"
+            case "Sport":
+                url += "/sport"
+                categoryStamp = "SPORT"
+            case "SpettacoliDanza":
+                url += "/spettacoli-e-danza"
+                categoryStamp = "SPETTACOLI E DANZA"
+            case "FieraConvegni":
+                url += "/fiera-e-convegni"
+                categoryStamp = "FIERA E CONVEGNI"
+            case "ArteMostre":
+                url += "/arte-e-mostre"
+                categoryStamp = "ARTE E MOSTRE"
+            case "Online":
+                url += "/eventi-online"
+                categoryStamp = "ONLINE"
+    else:
+        url += "/eventi"
+
     soup = parsing_html(url)
+
+    fulfillmentText = "\nTUTTI GLI EVENTI "
+    if category is not None:
+        fulfillmentText += "della categoria " + categoryStamp + ":\n"
+    else:
+        fulfillmentText += "di qualunque categoria:\n"
+
     events = soup.findAll('div', class_="evento marginbottom10")
+
     for event1 in events:
         fulfillmentText += "\n" + event1.a["title"] + "\n" + event1.a["href"] + "\n"
 
     return fulfillmentText
+
 
 
 def APP_scraping(url, app_name):
@@ -1013,9 +1052,25 @@ def webhooks():
 
     # intent events
     elif query_result.get("intent").get("displayName") == "EVENT":
-        fulfillmentText = NEWS_scraping(URL_NEWS)
+        if query_result["parameters"]["ArteMostre"] != "":
+            fulfillmentText = NEWS_scraping("ArteMostre")
+        elif query_result["parameters"]["Cinema"] != "":
+            fulfillmentText = NEWS_scraping("Cinema")
+        elif query_result["parameters"]["FieraConvegni"] != "":
+            fulfillmentText = NEWS_scraping("FieraConvegni")
+        elif query_result["parameters"]["Musica"] != "":
+            fulfillmentText = NEWS_scraping("Musica")
+        elif query_result["parameters"]["Musica"] != "":
+            fulfillmentText = NEWS_scraping("Musica")
+        elif query_result["parameters"]["SpettacoliDanza"] != "":
+            fulfillmentText = NEWS_scraping("SpettacoliDanza")
+        elif query_result["parameters"]["Sport"] != "":
+            fulfillmentText = NEWS_scraping("Sport")
+        elif query_result["parameters"]["Teatro"] != "":
+            fulfillmentText = NEWS_scraping("Teatro")
+        elif query_result["parameters"]["Online"] != "":
+            fulfillmentText = NEWS_scraping("Online")
 
-    # intent apps
 
 
     # if fulfillmentText == "":
