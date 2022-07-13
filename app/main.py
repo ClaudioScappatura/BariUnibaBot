@@ -854,30 +854,35 @@ def EVENT_scraping(category):
     else:
         url += "/eventi"
 
-    soup = parsing_html(url)
+    if category != "EVENT_INFO":
+        
+        soup = parsing_html(url)
 
-    fulfillmentText = "\nTUTTI GLI EVENTI "
-    if category is not None:
-        fulfillmentText += "della categoria " + categoryStamp + ":\n"
+        fulfillmentText = "\nTUTTI GLI EVENTI "
+        if category is not None:
+            fulfillmentText += "della categoria " + categoryStamp + ":\n"
+        else:
+            fulfillmentText += "di qualunque categoria:\n"
+
+        events = soup.findAll('div', class_="evento marginbottom10")
+
+        for event1 in events:
+            fulfillmentText += "\n" + event1.a["title"] + "\n" + event1.a["href"] + "\n"
+            for event2 in event1.findAll('span', class_="marginright5"):
+                print(event2.text)
+                if "2010" not in event2.text and "2011" not in event2.text and "2012" not in event2.text and "2013" not in event2.text and "2014" not in event2.text and "2015" not in event2.text and "2016" not in event2.text and "2017" not in event2.text and "2018" not in event2.text and "2019" not in event2.text and "2020" not in event2.text and "2021" not in event2.text and "2022" not in event2.text and "2023" not in event2.text:
+                    fulfillmentText += " " + event2.text
+                event3 = event2.find_next_sibling()
+                if event3 is not None:
+                    if len(event3.findAll()) == 0 and re.search(event2.text, event3.text) is None:
+                        fulfillmentText += " " + event3.text
+
+            fulfillmentText += "\n"
+
+        fulfillmentText = re.sub("Presso ", "\nPresso ", fulfillmentText)
     else:
-        fulfillmentText += "di qualunque categoria:\n"
+        fulfillmentText = "Cosa ti interessa sapere sugli EVENTI?\n\n - Quali sono gli eventi di/a Bari\n - Quali sono gli eventi di una determinata categoria (es: Sport)\n"
 
-    events = soup.findAll('div', class_="evento marginbottom10")
-
-    for event1 in events:
-        fulfillmentText += "\n" + event1.a["title"] + "\n" + event1.a["href"] + "\n"
-        for event2 in event1.findAll('span', class_="marginright5"):
-            print(event2.text)
-            if "2010" not in event2.text and "2011" not in event2.text and "2012" not in event2.text and "2013" not in event2.text and "2014" not in event2.text and "2015" not in event2.text and "2016" not in event2.text and "2017" not in event2.text and "2018" not in event2.text and "2019" not in event2.text and "2020" not in event2.text and "2021" not in event2.text and "2022" not in event2.text and "2023" not in event2.text:
-                fulfillmentText += " " + event2.text
-            event3 = event2.find_next_sibling()
-            if event3 is not None:
-                if len(event3.findAll()) == 0 and re.search(event2.text, event3.text) is None:
-                    fulfillmentText += " " + event3.text
-
-        fulfillmentText += "\n"
-
-    fulfillmentText = re.sub("Presso ", "\nPresso ", fulfillmentText)
     return fulfillmentText
 
 
@@ -905,48 +910,53 @@ def APP_scraping(url, app_name):
             case "BARINFORMA":
                 app_name = "BARInforma"
                 parsing = barInforma
+            case "APP_INFO":
+                app_name = "APP_INFO"
 
     fulfillmentText = ""
     # soupApps = parsing_html(url)
     # apps = soupApps.find('div', class_="span12 bg-f9f9f9 padding20")
+    if app_name != "APP_INFO":
+        for app2 in apps.findAll('a'):
+            if app2["title"] not in fulfillmentText:
+                if app_name is None:
+                    printText = True
+                else:
+                    printText = False
 
-    for app2 in apps.findAll('a'):
-        if app2["title"] not in fulfillmentText:
-            if app_name is None:
-                printText = True
-            else:
-                printText = False
+                if app2["title"] == app_name or printText is True:
+                    # fulfillmentText += "\n - "
+                    fulfillmentText += " - " + app2["title"]
+                    fulfillmentText += "\n"
+                    fulfillmentText += app2["href"]
+                    fulfillmentText += "\n"
+                    if app_name is not None:
+                        # prendo le descrizioni da pagina dedicata ad app
+                        soupApps2 = parsing
+                        app3 = soupApps2.find('div', class_="strutturacobari strutturaschedaapp")
+                        app4 = app3.find('div', class_="span12")
+                        app5 = app4.findAll('div', class_="span12")
+                        for app6 in app5:
+                            if len(app6.text) > 45:
+                                fulfillmentText += app6.text
+                                fulfillmentText += "\n"
+                        links = soupApps2.findAll("div", class_="span12 marginbottom10 text-center")
+                        for store in links:
+                            for store2 in store.findAll('a'):
+                                if store2["href"] is not None and "apple" in store2["href"]:
+                                    fulfillmentText += "\nDownload app on the APP STORE (Iphone):\n"
+                                    fulfillmentText += store2["href"]
+                                elif store2["href"] is not None and "google" in store2["href"]:
+                                    fulfillmentText += "\nDownload app on GOOGLE PLAY STORE (Android):\n"
+                                    fulfillmentText += store2["href"]
 
-            if app2["title"] == app_name or printText is True:
-                # fulfillmentText += "\n - "
-                fulfillmentText += " - " + app2["title"]
-                fulfillmentText += "\n"
-                fulfillmentText += app2["href"]
-                fulfillmentText += "\n"
-                if app_name is not None:
-                    # prendo le descrizioni da pagina dedicata ad app
-                    soupApps2 = parsing
-                    app3 = soupApps2.find('div', class_="strutturacobari strutturaschedaapp")
-                    app4 = app3.find('div', class_="span12")
-                    app5 = app4.findAll('div', class_="span12")
-                    for app6 in app5:
-                        if len(app6.text) > 30:
-                            fulfillmentText += app6.text
-                            fulfillmentText += "\n"
-                    links = soupApps2.findAll("div", class_="span12 marginbottom10 text-center")
-                    for store in links:
-                        for store2 in store.findAll('a'):
-                            if store2["href"] is not None and "apple" in store2["href"]:
-                                fulfillmentText += "\nDownload app on the APP STORE (Iphone):\n"
-                                fulfillmentText += store2["href"]
-                            elif store2["href"] is not None and "google" in store2["href"]:
-                                fulfillmentText += "\nDownload app on GOOGLE PLAY STORE (Android):\n"
-                                fulfillmentText += store2["href"]
+                    fulfillmentText += "\n"
+                    printText = False
 
-                fulfillmentText += "\n"
-                printText = False
+        fulfillmentText = re.sub("\. ", ".\n", fulfillmentText)
+    else:
+        fulfillmentText = "\nCosa vuoi sapere riguardo le App?\n\n - Tutte le app di Bari\n - Una specifica app di Bari"
 
-    fulfillmentText = re.sub("\. ", ".\n", fulfillmentText)
     return fulfillmentText
 
 
@@ -1090,6 +1100,10 @@ def webhooks():
         else:
             fulfillmentText = EVENT_scraping(None)
 
+    # intent info event
+    elif query_result.get("intent").get("displayName") == "EVENT_INFO":
+        fulfillmentText = EVENT_scraping("EVENT_INFO")
+
     # intent APPS
     elif query_result.get("intent").get("displayName") == "APP":
         if query_result["parameters"]["MUVT"] != "":
@@ -1106,6 +1120,11 @@ def webhooks():
             fulfillmentText = APP_scraping(URL_APPS, "BARINFORMA")
         else:
             fulfillmentText = APP_scraping(URL_APPS, None)
+
+    # intent info app
+    elif query_result.get("intent").get("displayName") == "APP_INFO":
+        fulfillmentText = APP_scraping(URL_APPS, "APP_INFO")
+
 
     # if fulfillmentText == "":
     #    fulfillmentText = "Ho ancora tanto da imparare, puoi ripetere?"

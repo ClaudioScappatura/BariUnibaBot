@@ -942,7 +942,7 @@ def APP_scraping2(url, app_name):
     return fulfillmentText
 
 
-def APP_scraping(url, app_name, apps):
+def APP_scraping(url, app_name):
     if app_name is not None:
         match app_name:
             case "MUVT":
@@ -1032,7 +1032,7 @@ bariAiuta = parsing_html(
 # print(CDR_scraping(URL_CDR, None, "CDR_COSA"))
 # print(cie_scraping(URL_CIE, None, "CIE_TEMPI"))
 # print(SANZIONI_scraping(URL_SANZ, None, "SANZ_COME"))
-print(APP_scraping(URL_APPS, None, apps))
+print(APP_scraping(URL_APPS, "MUVT"))
 # print(EVENT_scraping(None))
 # print(cie_scraping(URL_CIE, "PORTALE CIE", None))
 # print(cie_scraping(URL_CIE, "UFFICIO ANAGRAFE SAN PASQUALE", None))
