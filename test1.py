@@ -947,7 +947,7 @@ def APP_scraping(url, app_name):
 # print(CDR_scraping(URL_CDR, None, "CDR_COSA"))
 # print(cie_scraping(URL_CIE, None, "CIE_TEMPI"))
 # print(SANZIONI_scraping(URL_SANZ, None, "SANZ_COME"))
-print(APP_scraping(URL_APPS, None))
+print(APP_scraping(URL_APPS, "TUPASSI"))
 # print(EVENT_scraping(None))
 # print(cie_scraping(URL_CIE, "PORTALE CIE", None))
 # print(cie_scraping(URL_CIE, "UFFICIO ANAGRAFE SAN PASQUALE", None))

@@ -1085,7 +1085,7 @@ def webhooks():
 
     # intent APPS
     elif query_result.get("intent").get("displayName") == "APP":
-        if query_result["parameters"]["MUVT"] != "" and query_result["parameters"]["MUVT"] != "[]":
+        if len(query_result["parameters"]["MUVT"]) > 4:
             fulfillmentText = APP_scraping(URL_APPS, "MUVT")
         elif query_result["parameters"]["BARIAIUTA"] != "":
             fulfillmentText = APP_scraping(URL_APPS, "BARIAIUTA")
