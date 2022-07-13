@@ -855,7 +855,7 @@ def EVENT_scraping(category):
         url += "/eventi"
 
     if category != "EVENT_INFO":
-        
+
         soup = parsing_html(url)
 
         fulfillmentText = "\nTUTTI GLI EVENTI "
@@ -960,13 +960,26 @@ def APP_scraping(url, app_name):
     return fulfillmentText
 
 
+def provaTelegram(request_pay):
+    #token = "5489998677:AAHBmuuy7Y2eZVphBibCaTltd3-AOnMD9vA"
+    telegramPayload = request_pay['originalDetectIntentRequest']['payload']
+    chat_id = telegramPayload['data'][0]['chat']['id']
+    token = '5430259949:AAFWM6G3Nma71fS8SkoeVOQ-Fw_XrSaaVRQ'
+    msg = "Send text with FOTOOOO 😉"
+    img_uri = "https://www.ixbt.com/img/n1/news/2022/3/1/62342d1404eb2_large.jpg"
+    telegram_msg = requests.get(
+        f'https://api.telegram.org/bot{token}/sendPhoto?chat_id={chat_id}&caption={msg}&photo={img_uri}')
+    print(telegram_msg)
+    print(telegram_msg.content)
+
+
 @app.route("/webhooks", methods=["POST"])
 def webhooks():
     req = request.get_json(silent=True, force=True)
     fulfillmentText = ""
     # processo la query che arriva in JSON
     query_result = req.get('queryResult')
-
+    provaTelegram(req)
     # intent della carta di identità (CIE)
     if query_result.get("intent").get("displayName") == "CIE_INFO":
         fulfillmentText = cie_scraping(URL_CIE, "INFO", None)
@@ -1124,7 +1137,6 @@ def webhooks():
     # intent info app
     elif query_result.get("intent").get("displayName") == "APP_INFO":
         fulfillmentText = APP_scraping(URL_APPS, "APP_INFO")
-
 
     # if fulfillmentText == "":
     #    fulfillmentText = "Ho ancora tanto da imparare, puoi ripetere?"
