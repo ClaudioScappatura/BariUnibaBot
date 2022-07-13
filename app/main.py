@@ -156,7 +156,7 @@ def cie_scraping(url, text, context):
                           "elettronica)?:\n\n - Chi può richiedere la CIE\n - Quando poter richiedere la CIE\n - Come " \
                           "richiedere la CIE (procedimento)\n - Documenti necessari per richiesta CIE\n - " \
                           "Richiedere un duplicato della CIE\n - CIE per cittadini NON comunitari\n - Validità della " \
-                          "CIE per l'espartrio\n - Info su PIN e PUK\n - Esperimersi sulla donazione degli    " \
+                          "CIE per l'espatrio\n - Info su PIN e PUK\n - Esprimersi sulla donazione degli " \
                           "organi\n - " \
                           "Portale CIE\n - Costi della CIE\n - Come pagare la CIE\n - Tempi di arrivo CIE\n - Durata " \
                           "validità CIE "
@@ -979,7 +979,7 @@ def webhooks():
     fulfillmentText = ""
     # processo la query che arriva in JSON
     query_result = req.get('queryResult')
-    provaTelegram(req)
+    #provaTelegram(req)
     # intent della carta di identità (CIE)
     if query_result.get("intent").get("displayName") == "CIE_INFO":
         fulfillmentText = cie_scraping(URL_CIE, "INFO", None)
