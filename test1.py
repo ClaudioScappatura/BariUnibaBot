@@ -880,7 +880,7 @@ def EVENT_scraping(category):
 URL_APPS = "https://www.comune.bari.it/web/egov"
 
 
-def APP_scraping(url, app_name):
+def APP_scraping2(url, app_name):
     if app_name is not None:
         match app_name:
             case "MUVT":
@@ -915,8 +915,8 @@ def APP_scraping(url, app_name):
                 fulfillmentText += "\n"
                 fulfillmentText += app2["href"]
                 fulfillmentText += "\n"
-                if app_name is not None:
-                     # prendo le descrizioni da pagina dedicata ad app
+                # if app_name is not None:
+
                 #    soupApps = parsing_html(app2["href"])
                 #    app3 = soupApps.find('div', class_="strutturacobari strutturaschedaapp")
                 #    app4 = app3.find('div', class_="span12")
@@ -942,12 +942,97 @@ def APP_scraping(url, app_name):
     return fulfillmentText
 
 
+def APP_scraping(url, app_name, apps):
+    if app_name is not None:
+        match app_name:
+            case "MUVT":
+                app_name = "MUVT"
+                parsing = muvt
+            case "BARIAIUTA":
+                app_name = "BariAiuta"
+                parsing = bariAiuta
+            case "TUPASSI":
+                app_name = "TuPassi"
+                parsing = tuPassi
+            case "INFOSMARTCITY":
+                app_name = "InfoSmartCity"
+                parsing = infoSmartCity
+            case "BARISOLVE":
+                app_name = "BaRisolve"
+                parsing = baRisolve
+            case "BARISOCIAL":
+                app_name = "Bari Social"
+                parsing = bariSocial
+            case "BARINFORMA":
+                app_name = "BARInforma"
+                parsing = barInforma
+
+    fulfillmentText = ""
+    # soupApps = parsing_html(url)
+    # apps = soupApps.find('div', class_="span12 bg-f9f9f9 padding20")
+
+    for app2 in apps.findAll('a'):
+        if app2["title"] not in fulfillmentText:
+            if app_name is None:
+                printText = True
+            else:
+                printText = False
+
+            if app2["title"] == app_name or printText is True:
+                # fulfillmentText += "\n - "
+                fulfillmentText += " - " + app2["title"]
+                fulfillmentText += "\n"
+                fulfillmentText += app2["href"]
+                fulfillmentText += "\n"
+                if app_name is not None:
+                    # prendo le descrizioni da pagina dedicata ad app
+                    soupApps2 = parsing
+                    app3 = soupApps2.find('div', class_="strutturacobari strutturaschedaapp")
+                    app4 = app3.find('div', class_="span12")
+                    app5 = app4.findAll('div', class_="span12")
+                    for app6 in app5:
+                        if len(app6.text) > 30:
+                            fulfillmentText += app6.text
+                            fulfillmentText += "\n"
+                    links = soupApps2.findAll("div", class_="span12 marginbottom10 text-center")
+                    for store in links:
+                        for store2 in store.findAll('a'):
+                            if store2["href"] is not None and "apple" in store2["href"]:
+                                fulfillmentText += "\nDownload app on the APP STORE (Iphone):\n"
+                                fulfillmentText += store2["href"]
+                            elif store2["href"] is not None and "google" in store2["href"]:
+                                fulfillmentText += "\nDownload app on GOOGLE PLAY STORE (Android):\n"
+                                fulfillmentText += store2["href"]
+
+                fulfillmentText += "\n"
+                printText = False
+
+    fulfillmentText = re.sub("\. ", ".\n", fulfillmentText)
+    return fulfillmentText
+
+
+soupApps = parsing_html(URL_APPS)
+apps = soupApps.find('div', class_="span12 bg-f9f9f9 padding20")
+muvt = parsing_html(
+    "https://www.comune.bari.it/web/egov/home/-/asset_publisher/43CuEMaJc6ZV/content/muvt/20181?inheritRedirect=false&redirect=https%3A%2F%2Fwww.comune.bari.it%2Fweb%2Fegov%2Fhome%3Fp_p_id%3D101_INSTANCE_43CuEMaJc6ZV%26p_p_lifecycle%3D0%26p_p_state%3Dnormal%26p_p_mode%3Dview%26p_p_col_id%3Dcolumn-4%26p_p_col_count%3D1")
+barInforma = parsing_html(
+    "https://www.comune.bari.it/web/egov/home/-/asset_publisher/43CuEMaJc6ZV/content/barinforma/20181?inheritRedirect=false&redirect=https%3A%2F%2Fwww.comune.bari.it%2Fweb%2Fegov%2Fhome%3Fp_p_id%3D101_INSTANCE_43CuEMaJc6ZV%26p_p_lifecycle%3D0%26p_p_state%3Dnormal%26p_p_mode%3Dview%26p_p_col_id%3Dcolumn-4%26p_p_col_count%3D1")
+bariSocial = parsing_html(
+    "https://www.comune.bari.it/web/egov/home/-/asset_publisher/43CuEMaJc6ZV/content/bari-social/20181?inheritRedirect=false&redirect=https%3A%2F%2Fwww.comune.bari.it%2Fweb%2Fegov%2Fhome%3Fp_p_id%3D101_INSTANCE_43CuEMaJc6ZV%26p_p_lifecycle%3D0%26p_p_state%3Dnormal%26p_p_mode%3Dview%26p_p_col_id%3Dcolumn-4%26p_p_col_count%3D1")
+baRisolve = parsing_html(
+    "https://www.comune.bari.it/web/egov/home/-/asset_publisher/43CuEMaJc6ZV/content/app-barisolve/20181?inheritRedirect=false&redirect=https%3A%2F%2Fwww.comune.bari.it%2Fweb%2Fegov%2Fhome%3Fp_p_id%3D101_INSTANCE_43CuEMaJc6ZV%26p_p_lifecycle%3D0%26p_p_state%3Dnormal%26p_p_mode%3Dview%26p_p_col_id%3Dcolumn-4%26p_p_col_count%3D1")
+infoSmartCity = parsing_html(
+    "https://www.comune.bari.it/web/egov/home/-/asset_publisher/43CuEMaJc6ZV/content/infosmartcity/20181?inheritRedirect=false&redirect=https%3A%2F%2Fwww.comune.bari.it%2Fweb%2Fegov%2Fhome%3Fp_p_id%3D101_INSTANCE_43CuEMaJc6ZV%26p_p_lifecycle%3D0%26p_p_state%3Dnormal%26p_p_mode%3Dview%26p_p_col_id%3Dcolumn-4%26p_p_col_count%3D1")
+tuPassi = parsing_html(
+    "https://www.comune.bari.it/web/egov/home/-/asset_publisher/43CuEMaJc6ZV/content/tupassi/20181?inheritRedirect=false&redirect=https%3A%2F%2Fwww.comune.bari.it%2Fweb%2Fegov%2Fhome%3Fp_p_id%3D101_INSTANCE_43CuEMaJc6ZV%26p_p_lifecycle%3D0%26p_p_state%3Dnormal%26p_p_mode%3Dview%26p_p_col_id%3Dcolumn-4%26p_p_col_count%3D1")
+bariAiuta = parsing_html(
+    "https://www.comune.bari.it/web/egov/home/-/asset_publisher/43CuEMaJc6ZV/content/bariaiuta/20181?inheritRedirect=false&redirect=https%3A%2F%2Fwww.comune.bari.it%2Fweb%2Fegov%2Fhome%3Fp_p_id%3D101_INSTANCE_43CuEMaJc6ZV%26p_p_lifecycle%3D0%26p_p_state%3Dnormal%26p_p_mode%3Dview%26p_p_col_id%3Dcolumn-4%26p_p_col_count%3D1")
 # print(CDR_scraping(URL_CDR, None, "CDR_INFO"))
 # print(NEWS_scraping(URL_NEWS))
 # print(CDR_scraping(URL_CDR, None, "CDR_COSA"))
 # print(cie_scraping(URL_CIE, None, "CIE_TEMPI"))
 # print(SANZIONI_scraping(URL_SANZ, None, "SANZ_COME"))
-print(APP_scraping(URL_APPS, "TUPASSI"))
+print(APP_scraping(URL_APPS, None, apps))
 # print(EVENT_scraping(None))
 # print(cie_scraping(URL_CIE, "PORTALE CIE", None))
 # print(cie_scraping(URL_CIE, "UFFICIO ANAGRAFE SAN PASQUALE", None))
