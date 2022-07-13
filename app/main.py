@@ -867,16 +867,18 @@ def EVENT_scraping(category):
     for event1 in events:
         fulfillmentText += "\n" + event1.a["title"] + "\n" + event1.a["href"] + "\n"
         for event2 in event1.findAll('span', class_="marginright5"):
-            fulfillmentText += event2.text+" "
+            print(event2.text)
+            if "2010" not in event2.text and "2011" not in event2.text and "2012" not in event2.text and "2013" not in event2.text and "2014" not in event2.text and "2015" not in event2.text and "2016" not in event2.text and "2017" not in event2.text and "2018" not in event2.text and "2019" not in event2.text and "2020" not in event2.text and "2021" not in event2.text and "2022" not in event2.text and "2023" not in event2.text:
+                fulfillmentText += " "+event2.text
             event3 = event2.find_next_sibling()
             if event3 is not None:
-                if len(event3.findAll()) == 0:
+                if len(event3.findAll()) == 0 and re.search(event2.text, event3.text) is None:
                     fulfillmentText += " "+event3.text
+
         fulfillmentText += "\n"
 
     fulfillmentText = re.sub("Presso ", "\nPresso ", fulfillmentText)
     return fulfillmentText
-
 
 
 def APP_scraping(url, app_name):
