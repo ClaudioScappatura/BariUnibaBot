@@ -1080,6 +1080,8 @@ def webhooks():
             fulfillmentText = EVENT_scraping("Teatro")
         elif query_result["parameters"]["Online"] != "":
             fulfillmentText = EVENT_scraping("Online")
+        else:
+            fulfillmentText = EVENT_scraping(None)
 
 
 
