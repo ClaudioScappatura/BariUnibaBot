@@ -507,7 +507,6 @@ def CDR_scraping(url, text, context):
                     try:
                         # è la lista dei figli del secondo DIV
                         for k in t.children:
-
                             if k.name is not None:
                                 # verifica sul numero di figli
                                 has_child = len(k.findAll()) != 0
@@ -536,7 +535,6 @@ def CDR_scraping(url, text, context):
                                                     fulfillmentText += k.text.replace(str(z.text), "")
                                                     fulfillmentText += "\n"
                                                     break  # esco per evitare duplicati
-
                                             elif z.name == "table" and printText is True:
                                                 fulfillmentText += "ATTENZIONE: Per visualizzare la tabella riguardo le esenzioni, visita: " + URL_CDR + "\n"
                                             # se il tag è 'li' (elenco puntato), allora metti un a capo
@@ -545,7 +543,7 @@ def CDR_scraping(url, text, context):
                                                 fulfillmentText += z.text
                                                 fulfillmentText += "\n"
                                             # se il tag non ha fratelli precedenti e successivi, allora stampa prima il testo del padre e poi il proprio (ESCLUSIONE DUPLICATI)
-                                            elif len(z.findPreviousSiblings()) == 0 and len(z.findNextSiblings()) == 0:
+                                            elif len(z.findPreviousSiblings()) == 0 and len(z.findNextSiblings()) == 0 and len(k.text.replace(str(z.text), "")) < 3:
                                                 if printText is True:
                                                     fulfillmentText += k.text.replace(str(z.text), "")
                                                     fulfillmentText += z.text
@@ -1006,6 +1004,8 @@ def APP_scraping(url, app_name):
     return fulfillmentText
 
 
+print(CDR_scraping(URL_CDR, None, "CDR_INFO"))
+
 soupApps = parsing_html(URL_APPS)
 apps = soupApps.find('div', class_="span12 bg-f9f9f9 padding20")
 muvt = parsing_html(
@@ -1027,7 +1027,7 @@ bariAiuta = parsing_html(
 # print(CDR_scraping(URL_CDR, None, "CDR_COSA"))
 # print(cie_scraping(URL_CIE, None, "CIE_TEMPI"))
 # print(SANZIONI_scraping(URL_SANZ, None, "SANZ_COME"))
-print(APP_scraping(URL_APPS, "MUVT"))
+#print(APP_scraping(URL_APPS, "MUVT"))
 # print(EVENT_scraping(None))
 # print(cie_scraping(URL_CIE, "PORTALE CIE", None))
 # print(cie_scraping(URL_CIE, "UFFICIO ANAGRAFE SAN PASQUALE", None))

@@ -601,7 +601,7 @@ def CR_scraping(url, text, context):
     if context == "CR_INFO":
         fulfillmentText = "Cosa vuoi sapere nello specifico?\n - Cos'è il C.D.R.(cambio di residenza)\n - Come " \
                           "cambiare residenza\n - Documenti da allegare al C.D.R.\n - Cambio residenza cittadini " \
-                          "stranieri\n - Costo del C.D.R.\n - Costo del C.D.R.\n - Tempi necessari per il C.D.R.\n - " \
+                          "stranieri\n - Costo del C.D.R.\n - Tempi necessari per il C.D.R.\n - " \
                           "Moduli per il C.D.R.\n - Orari di apertura ufficio anagrafe "
 
     return fulfillmentText
@@ -738,7 +738,7 @@ def CDR_scraping(url, text, context):
                                                 fulfillmentText += z.text
                                                 fulfillmentText += "\n"
                                             # se il tag non ha fratelli precedenti e successivi, allora stampa prima il testo del padre e poi il proprio (ESCLUSIONE DUPLICATI)
-                                            elif len(z.findPreviousSiblings()) == 0 and len(z.findNextSiblings()) == 0:
+                                            elif len(z.findPreviousSiblings()) == 0 and len(z.findNextSiblings()) == 0 and len(k.text.replace(str(z.text), "")) < 3:
                                                 if printText is True:
                                                     fulfillmentText += k.text.replace(str(z.text), "")
                                                     fulfillmentText += z.text
