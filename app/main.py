@@ -83,7 +83,7 @@ def cie_scraping(url, text, context):
     else:
         printText = False
 
-    if text != "INFO":
+    if text != "INFO" and text != "CIE_SANPASQUALE" and text != "CIE_CENTRALE":
         Cie_Soup = soup.findAll('div', class_="accordion-body collapse in")
         # se la variabile text è vuota, stampa tutte le info riguardo la CDI, altrimenti
         # ricerca tutti i DIV di quella classe
@@ -162,14 +162,14 @@ def cie_scraping(url, text, context):
                           "validità CIE "
 
     if text is not None:
-        if text == "UFFICIO ANAGRAFE CENTRALE":
+        if text == "CIE_CENTRALE":
             fulfillmentText = "UFFICIO ANAGRAFE CENTRALE - CARTE D'IDENTITÀ\n\nNumero di telefono:\n080/5773357 - " \
                               "3304 - 3782\nNumero di Email PEC:\n " \
                               "ci.anagrafe.comunebari@pec.rupar.puglia.it\n\nORARI DI APERTURA AL " \
                               "PUBBLICO:\n\nLunedì: 9.00 - 12.00\nMartedì: 9.00 - 12.00\nMercoledì: 9.00 - " \
                               "12.00\nGiovedì: 9.00 - 12.00 e 15.30 - 17.00\nVenerdì: 9.00 - 12.00\nSabato: " \
                               "chiuso\n\nIndirizzo: Corso Vittorio Veneto,4 70122 Bari "
-        elif text == "UFFICIO ANAGRAFE SAN PASQUALE":
+        elif text == "CIE_SANPASQUALE":
             fulfillmentText = "UFFICIO ANAGRAFE/STATO CIVILE DECENTRATO - DELEGAZIONE CARRASSI-SAN " \
                               "PASQUALE\n\nNumero di telefono :  \n080/5772491 080/5772493  080/5772496  " \
                               "080/5772497\nNumero di Email PEC " \
@@ -996,6 +996,11 @@ def webhooks():
         fulfillmentText = cie_scraping(URL_CIE, "PORTALE CIE", None)
     elif query_result.get("intent").get("displayName") == "CIE_PAGAMENTO":
         fulfillmentText = cie_scraping(URL_CIE, "PAGAMENTO", None)
+    elif query_result.get("intent").get("displayName") == "CIE_DOVE":
+        if query_result["parameters"]["SanPasquale"] != "":
+            fulfillmentText = cie_scraping(URL_CIE, "CIE_SANPASQUALE", None)
+        elif query_result["parameters"]["Centrale"] != "":
+            fulfillmentText = cie_scraping(URL_CIE, "CIE_CENTRALE", None)
 
     # intent del cambio di residenza (CR)
     elif query_result.get("intent").get("displayName") == "CR_INFO":
@@ -1118,6 +1123,8 @@ def webhooks():
             fulfillmentText = APP_scraping(URL_APPS, "BARISOCIAL")
         elif query_result["parameters"]["BARINFORMA"] != "":
             fulfillmentText = APP_scraping(URL_APPS, "BARINFORMA")
+        elif query_result["parameters"]["BARISOLVE"] != "":
+            fulfillmentText = APP_scraping(URL_APPS, "BARISOLVE")
         else:
             fulfillmentText = APP_scraping(URL_APPS, None)
 
