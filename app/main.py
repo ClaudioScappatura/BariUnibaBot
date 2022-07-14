@@ -881,7 +881,7 @@ def EVENT_scraping(category):
 
         fulfillmentText = re.sub("Presso ", "\nPresso ", fulfillmentText)
     else:
-        fulfillmentText = "Cosa ti interessa sapere sugli EVENTI?\n\n - Quali sono gli eventi di/a Bari\n - Quali sono gli eventi di una determinata categoria (es: Sport)\n"
+        fulfillmentText = "Cosa ti interessa sapere sugli EVENTI?\n\n - Quali sono gli eventi di/a Bari\n - Quali sono gli eventi di una determinata categoria (es: Sport)\n\n Le categorie disponibili sono:\n - Tutte le categorie\n - Cinema\n - Fiera e convegni\n - Musica\n - Spettacoli e danza\n - Sport\n - Teatro\n - Online\n"
 
     return fulfillmentText
 
