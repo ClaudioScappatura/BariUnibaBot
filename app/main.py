@@ -549,6 +549,8 @@ def CR_scraping(url, text, context):
                                                     fulfillmentText += "\n"
                                                     break  # esco per evitare duplicati
 
+                                            elif context == "accordion_descrizione_servizio_11639056" and z.text.isupper() and len(z.findPreviousSiblings()) == 0 and z.text == "N.B.":
+                                                return fulfillmentText
                                             # se il tag è 'li' (elenco puntato), allora metti un a capo
                                             elif z.name == "li" and printText is True:
                                                 fulfillmentText += "- "

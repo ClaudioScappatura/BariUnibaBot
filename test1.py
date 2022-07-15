@@ -174,7 +174,7 @@ def cie_scraping(url, text, context):
 
 
 # scraping sulle info inerenti al cambio di residenza
-def CR_scraping(url, text, context):
+def CR_scraping(url, text, context, stop):
     fulfillmentText = ""
     soup = parsing_html(url)
 
@@ -258,6 +258,8 @@ def CR_scraping(url, text, context):
                                                     fulfillmentText += "\n"
                                                     break  # esco per evitare duplicati
 
+                                            elif context == "accordion_descrizione_servizio_11639056" and z.text.isupper() and len(z.findPreviousSiblings()) == 0 and z.text == "N.B.":
+                                                return fulfillmentText
                                             # se il tag è 'li' (elenco puntato), allora metti un a capo
                                             elif z.name == "li" and printText is True:
                                                 fulfillmentText += "- "
@@ -288,18 +290,18 @@ def CR_scraping(url, text, context):
                 continue
     else:
         # stampa tutti i dati inerenti ai moduli per cambio di residenza
+        fulfillmentText = ""
         CR_Soup = soup.findAll('a', class_="inverted-link")
         for links in CR_Soup:
-            print(links.text + ": \n - " + "https://www.comune.bari.it" + links["href"] + "\n")
+            fulfillmentText += ("\n" + links.text + ": \n - " + "https://www.comune.bari.it" + links["href"] + "\n")
 
-    if text is not None:
-        if text == "UFFICIO ANAGRAFE CENTRALE":
-            fulfillmentText = "UFFICIO ANAGRAFE CENTRALE - DICHIARAZIONI DI RESIDENZA E CAMBI DI DOMICILIO\n\nNumero " \
-                              "di telefono:\n080/5773332 - 3333 - 3355 - 3376 - 3344 - 3314 - 3729 - 6450 - 2489 - " \
-                              "4636 - 4606\nNumero di fax:\n080/5773359\nNumero di Email " \
-                              "PEC:\nanagrafe.comunebari@pec.rupar.puglia.it\nPosta elettronica " \
-                              ":\nufficio.dichiarazioniresidenza@comune.bari.it\n\nIndirizzo : Corso Vittorio Veneto," \
-                              "4 70122 Bari "
+    if context == "accordion_dove_11639056":
+        fulfillmentText = "UFFICIO ANAGRAFE CENTRALE - DICHIARAZIONI DI RESIDENZA E CAMBI DI DOMICILIO\n\nNumero " \
+                          "di telefono:\n080/5773332 - 3333 - 3355 - 3376 - 3344 - 3314 - 3729 - 6450 - 2489 - " \
+                          "4636 - 4606\n\nNumero di fax:\n080/5773359\n\nNumero di Email " \
+                          "PEC:\nanagrafe.comunebari@pec.rupar.puglia.it\n\nPosta elettronica " \
+                          ":\nufficio.dichiarazioniresidenza@comune.bari.it\n\nIndirizzo : Corso Vittorio Veneto," \
+                          "4 70122 Bari "
 
     if context == "accordion_come_11639056":
         fulfillmentText = CR_replace(fulfillmentText)
@@ -310,10 +312,13 @@ def CR_scraping(url, text, context):
     if context == "CR_INFO":
         fulfillmentText = "Cosa vuoi sapere nello specifico?\n - Cos'è il C.D.R.(cambio di residenza)\n - Come " \
                           "cambiare residenza\n - Documenti da allegare al C.D.R.\n - Cambio residenza cittadini " \
-                          "stranieri\n - Costo del C.D.R.\n - Costo del C.D.R.\n - Tempi necessari per il C.D.R.\n - " \
+                          "stranieri\n - Costo del C.D.R.\n - Tempi necessari per il C.D.R.\n - " \
                           "Moduli per il C.D.R.\n - Orari di apertura ufficio anagrafe "
 
     return fulfillmentText
+
+
+print(CR_scraping(URL_CR, None, "CR_COSA", "N.B."))
 
 
 # scraping sulle info inerenti alla TARI
@@ -543,7 +548,9 @@ def CDR_scraping(url, text, context):
                                                 fulfillmentText += z.text
                                                 fulfillmentText += "\n"
                                             # se il tag non ha fratelli precedenti e successivi, allora stampa prima il testo del padre e poi il proprio (ESCLUSIONE DUPLICATI)
-                                            elif len(z.findPreviousSiblings()) == 0 and len(z.findNextSiblings()) == 0 and len(k.text.replace(str(z.text), "")) < 3:
+                                            elif len(z.findPreviousSiblings()) == 0 and len(
+                                                    z.findNextSiblings()) == 0 and len(
+                                                    k.text.replace(str(z.text), "")) < 3:
                                                 if printText is True:
                                                     fulfillmentText += k.text.replace(str(z.text), "")
                                                     fulfillmentText += z.text
@@ -1024,10 +1031,10 @@ bariAiuta = parsing_html(
     "https://www.comune.bari.it/web/egov/home/-/asset_publisher/43CuEMaJc6ZV/content/bariaiuta/20181?inheritRedirect=false&redirect=https%3A%2F%2Fwww.comune.bari.it%2Fweb%2Fegov%2Fhome%3Fp_p_id%3D101_INSTANCE_43CuEMaJc6ZV%26p_p_lifecycle%3D0%26p_p_state%3Dnormal%26p_p_mode%3Dview%26p_p_col_id%3Dcolumn-4%26p_p_col_count%3D1")
 # print(CDR_scraping(URL_CDR, None, "CDR_INFO"))
 # print(NEWS_scraping(URL_NEWS))
-# print(CDR_scraping(URL_CDR, None, "CDR_COSA"))
+# print(CR_scraping(URL_CR, None, "CR_COSA"))
 # print(cie_scraping(URL_CIE, None, "CIE_TEMPI"))
 # print(SANZIONI_scraping(URL_SANZ, None, "SANZ_COME"))
-#print(APP_scraping(URL_APPS, "MUVT"))
+# print(APP_scraping(URL_APPS, "MUVT"))
 # print(EVENT_scraping(None))
 # print(cie_scraping(URL_CIE, "PORTALE CIE", None))
 # print(cie_scraping(URL_CIE, "UFFICIO ANAGRAFE SAN PASQUALE", None))
