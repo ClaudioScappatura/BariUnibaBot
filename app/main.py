@@ -549,7 +549,8 @@ def CR_scraping(url, text, context):
                                                     fulfillmentText += "\n"
                                                     break  # esco per evitare duplicati
 
-                                            elif context == "accordion_descrizione_servizio_11639056" and z.text.isupper() and len(z.findPreviousSiblings()) == 0 and z.text == "N.B.":
+                                            elif context == "accordion_descrizione_servizio_11639056" and z.text.isupper() and len(
+                                                    z.findPreviousSiblings()) == 0 and z.text == "N.B.":
                                                 return fulfillmentText
                                             # se il tag è 'li' (elenco puntato), allora metti un a capo
                                             elif z.name == "li" and printText is True:
@@ -732,7 +733,7 @@ def CDR_scraping(url, text, context):
                                                     fulfillmentText += k.text.replace(str(z.text), "")
                                                     fulfillmentText += "\n"
                                                     break  # esco per evitare duplicati
-                                            elif "NOTA BENE:" in z.text and context == "accordion_costi_SCHEDA_SERVIZIO_IMPORTED_8868" :
+                                            elif "NOTA BENE:" in z.text and context == "accordion_costi_SCHEDA_SERVIZIO_IMPORTED_8868":
                                                 return fulfillmentText
                                             elif z.name == "table" and printText is True:
                                                 fulfillmentText += "ATTENZIONE: Per visualizzare la tabella riguardo le esenzioni, visita: " + URL_CDR + "\n"
@@ -742,7 +743,9 @@ def CDR_scraping(url, text, context):
                                                 fulfillmentText += z.text
                                                 fulfillmentText += "\n"
                                             # se il tag non ha fratelli precedenti e successivi, allora stampa prima il testo del padre e poi il proprio (ESCLUSIONE DUPLICATI)
-                                            elif len(z.findPreviousSiblings()) == 0 and len(z.findNextSiblings()) == 0 and len(k.text.replace(str(z.text), "")) < 3:
+                                            elif len(z.findPreviousSiblings()) == 0 and len(
+                                                    z.findNextSiblings()) == 0 and len(
+                                                    k.text.replace(str(z.text), "")) < 3:
                                                 if printText is True:
                                                     fulfillmentText += k.text.replace(str(z.text), "")
                                                     fulfillmentText += z.text
@@ -966,6 +969,7 @@ def APP_scraping(url, app_name):
 
 @app.route("/webhooks", methods=["POST"])
 def webhooks():
+    webhooks.count = 1
     req = request.get_json(silent=True, force=True)
     fulfillmentText = ""
     # processo la query che arriva in JSON
@@ -1149,21 +1153,25 @@ def webhooks():
     }
 
 
-soupApps = parsing_html(URL_APPS)
-apps = soupApps.find('div', class_="span12 bg-f9f9f9 padding20")
-muvt = parsing_html(
-    "https://www.comune.bari.it/web/egov/home/-/asset_publisher/43CuEMaJc6ZV/content/muvt/20181?inheritRedirect=false&redirect=https%3A%2F%2Fwww.comune.bari.it%2Fweb%2Fegov%2Fhome%3Fp_p_id%3D101_INSTANCE_43CuEMaJc6ZV%26p_p_lifecycle%3D0%26p_p_state%3Dnormal%26p_p_mode%3Dview%26p_p_col_id%3Dcolumn-4%26p_p_col_count%3D1")
-barInforma = parsing_html(
-    "https://www.comune.bari.it/web/egov/home/-/asset_publisher/43CuEMaJc6ZV/content/barinforma/20181?inheritRedirect=false&redirect=https%3A%2F%2Fwww.comune.bari.it%2Fweb%2Fegov%2Fhome%3Fp_p_id%3D101_INSTANCE_43CuEMaJc6ZV%26p_p_lifecycle%3D0%26p_p_state%3Dnormal%26p_p_mode%3Dview%26p_p_col_id%3Dcolumn-4%26p_p_col_count%3D1")
-bariSocial = parsing_html(
-    "https://www.comune.bari.it/web/egov/home/-/asset_publisher/43CuEMaJc6ZV/content/bari-social/20181?inheritRedirect=false&redirect=https%3A%2F%2Fwww.comune.bari.it%2Fweb%2Fegov%2Fhome%3Fp_p_id%3D101_INSTANCE_43CuEMaJc6ZV%26p_p_lifecycle%3D0%26p_p_state%3Dnormal%26p_p_mode%3Dview%26p_p_col_id%3Dcolumn-4%26p_p_col_count%3D1")
-baRisolve = parsing_html(
-    "https://www.comune.bari.it/web/egov/home/-/asset_publisher/43CuEMaJc6ZV/content/app-barisolve/20181?inheritRedirect=false&redirect=https%3A%2F%2Fwww.comune.bari.it%2Fweb%2Fegov%2Fhome%3Fp_p_id%3D101_INSTANCE_43CuEMaJc6ZV%26p_p_lifecycle%3D0%26p_p_state%3Dnormal%26p_p_mode%3Dview%26p_p_col_id%3Dcolumn-4%26p_p_col_count%3D1")
-infoSmartCity = parsing_html(
-    "https://www.comune.bari.it/web/egov/home/-/asset_publisher/43CuEMaJc6ZV/content/infosmartcity/20181?inheritRedirect=false&redirect=https%3A%2F%2Fwww.comune.bari.it%2Fweb%2Fegov%2Fhome%3Fp_p_id%3D101_INSTANCE_43CuEMaJc6ZV%26p_p_lifecycle%3D0%26p_p_state%3Dnormal%26p_p_mode%3Dview%26p_p_col_id%3Dcolumn-4%26p_p_col_count%3D1")
-tuPassi = parsing_html(
-    "https://www.comune.bari.it/web/egov/home/-/asset_publisher/43CuEMaJc6ZV/content/tupassi/20181?inheritRedirect=false&redirect=https%3A%2F%2Fwww.comune.bari.it%2Fweb%2Fegov%2Fhome%3Fp_p_id%3D101_INSTANCE_43CuEMaJc6ZV%26p_p_lifecycle%3D0%26p_p_state%3Dnormal%26p_p_mode%3Dview%26p_p_col_id%3Dcolumn-4%26p_p_col_count%3D1")
-bariAiuta = parsing_html(
-    "https://www.comune.bari.it/web/egov/home/-/asset_publisher/43CuEMaJc6ZV/content/bariaiuta/20181?inheritRedirect=false&redirect=https%3A%2F%2Fwww.comune.bari.it%2Fweb%2Fegov%2Fhome%3Fp_p_id%3D101_INSTANCE_43CuEMaJc6ZV%26p_p_lifecycle%3D0%26p_p_state%3Dnormal%26p_p_mode%3Dview%26p_p_col_id%3Dcolumn-4%26p_p_col_count%3D1")
+run_once = 0
 
+while 1:
+    if run_once == 0:
+        soupApps = parsing_html(URL_APPS)
+        apps = soupApps.find('div', class_="span12 bg-f9f9f9 padding20")
+        muvt = parsing_html(
+            "https://www.comune.bari.it/web/egov/home/-/asset_publisher/43CuEMaJc6ZV/content/muvt/20181?inheritRedirect=false&redirect=https%3A%2F%2Fwww.comune.bari.it%2Fweb%2Fegov%2Fhome%3Fp_p_id%3D101_INSTANCE_43CuEMaJc6ZV%26p_p_lifecycle%3D0%26p_p_state%3Dnormal%26p_p_mode%3Dview%26p_p_col_id%3Dcolumn-4%26p_p_col_count%3D1")
+        barInforma = parsing_html(
+            "https://www.comune.bari.it/web/egov/home/-/asset_publisher/43CuEMaJc6ZV/content/barinforma/20181?inheritRedirect=false&redirect=https%3A%2F%2Fwww.comune.bari.it%2Fweb%2Fegov%2Fhome%3Fp_p_id%3D101_INSTANCE_43CuEMaJc6ZV%26p_p_lifecycle%3D0%26p_p_state%3Dnormal%26p_p_mode%3Dview%26p_p_col_id%3Dcolumn-4%26p_p_col_count%3D1")
+        bariSocial = parsing_html(
+            "https://www.comune.bari.it/web/egov/home/-/asset_publisher/43CuEMaJc6ZV/content/bari-social/20181?inheritRedirect=false&redirect=https%3A%2F%2Fwww.comune.bari.it%2Fweb%2Fegov%2Fhome%3Fp_p_id%3D101_INSTANCE_43CuEMaJc6ZV%26p_p_lifecycle%3D0%26p_p_state%3Dnormal%26p_p_mode%3Dview%26p_p_col_id%3Dcolumn-4%26p_p_col_count%3D1")
+        baRisolve = parsing_html(
+            "https://www.comune.bari.it/web/egov/home/-/asset_publisher/43CuEMaJc6ZV/content/app-barisolve/20181?inheritRedirect=false&redirect=https%3A%2F%2Fwww.comune.bari.it%2Fweb%2Fegov%2Fhome%3Fp_p_id%3D101_INSTANCE_43CuEMaJc6ZV%26p_p_lifecycle%3D0%26p_p_state%3Dnormal%26p_p_mode%3Dview%26p_p_col_id%3Dcolumn-4%26p_p_col_count%3D1")
+        infoSmartCity = parsing_html(
+            "https://www.comune.bari.it/web/egov/home/-/asset_publisher/43CuEMaJc6ZV/content/infosmartcity/20181?inheritRedirect=false&redirect=https%3A%2F%2Fwww.comune.bari.it%2Fweb%2Fegov%2Fhome%3Fp_p_id%3D101_INSTANCE_43CuEMaJc6ZV%26p_p_lifecycle%3D0%26p_p_state%3Dnormal%26p_p_mode%3Dview%26p_p_col_id%3Dcolumn-4%26p_p_col_count%3D1")
+        tuPassi = parsing_html(
+            "https://www.comune.bari.it/web/egov/home/-/asset_publisher/43CuEMaJc6ZV/content/tupassi/20181?inheritRedirect=false&redirect=https%3A%2F%2Fwww.comune.bari.it%2Fweb%2Fegov%2Fhome%3Fp_p_id%3D101_INSTANCE_43CuEMaJc6ZV%26p_p_lifecycle%3D0%26p_p_state%3Dnormal%26p_p_mode%3Dview%26p_p_col_id%3Dcolumn-4%26p_p_col_count%3D1")
+        bariAiuta = parsing_html(
+            "https://www.comune.bari.it/web/egov/home/-/asset_publisher/43CuEMaJc6ZV/content/bariaiuta/20181?inheritRedirect=false&redirect=https%3A%2F%2Fwww.comune.bari.it%2Fweb%2Fegov%2Fhome%3Fp_p_id%3D101_INSTANCE_43CuEMaJc6ZV%26p_p_lifecycle%3D0%26p_p_state%3Dnormal%26p_p_mode%3Dview%26p_p_col_id%3Dcolumn-4%26p_p_col_count%3D1")
+        run_once = 1
 # app.run(debug=True, port=5000)
