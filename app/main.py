@@ -1067,6 +1067,8 @@ def webhooks():
         fulfillmentText = CDR_scraping(URL_CDR, "EDICOLA", None)
     elif query_result.get("intent").get("displayName") == "CDR_ESENZIONE":
         fulfillmentText = CDR_scraping(URL_CDR, "ESENZIONE", None)
+    elif query_result.get("intent").get("displayName") == "CDR_PAGAMENTO":
+        fulfillmentText = CDR_scraping(URL_CDR, "PAGAMENTO", None)
 
     # intent sanzioni
     elif query_result.get("intent").get("displayName") == "SANZ_COSA":
