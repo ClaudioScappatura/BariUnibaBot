@@ -645,6 +645,7 @@ def CR_replace(fulfillmentText):
 
 # scraping sulle info inerenti al certificato di residenza
 def CDR_scraping(url, text, context):
+    cont = 0
     fulfillmentText = ""
     soup = parsing_html(url)
     printText = False
@@ -731,7 +732,8 @@ def CDR_scraping(url, text, context):
                                                     fulfillmentText += k.text.replace(str(z.text), "")
                                                     fulfillmentText += "\n"
                                                     break  # esco per evitare duplicati
-
+                                            elif "NOTA BENE:" in z.text and context == "accordion_costi_SCHEDA_SERVIZIO_IMPORTED_8868" :
+                                                return fulfillmentText
                                             elif z.name == "table" and printText is True:
                                                 fulfillmentText += "ATTENZIONE: Per visualizzare la tabella riguardo le esenzioni, visita: " + URL_CDR + "\n"
                                             # se il tag è 'li' (elenco puntato), allora metti un a capo
@@ -1064,7 +1066,7 @@ def webhooks():
     elif query_result.get("intent").get("displayName") == "CDR_EDICOLA":
         fulfillmentText = CDR_scraping(URL_CDR, "EDICOLA", None)
     elif query_result.get("intent").get("displayName") == "CDR_ESENZIONE":
-        fulfillmentText = CDR_scraping(URL_CDR, "PAGAMENTO", None)
+        fulfillmentText = CDR_scraping(URL_CDR, "ESENZIONE", None)
 
     # intent sanzioni
     elif query_result.get("intent").get("displayName") == "SANZ_COSA":

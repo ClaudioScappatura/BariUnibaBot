@@ -318,7 +318,7 @@ def CR_scraping(url, text, context, stop):
     return fulfillmentText
 
 
-print(CR_scraping(URL_CR, None, "CR_COSA", "N.B."))
+#print(CR_scraping(URL_CR, None, "CR_COSA", "N.B."))
 
 
 # scraping sulle info inerenti alla TARI
@@ -455,6 +455,7 @@ def TARI_scraping(url, text, context):
 
 # scraping sulle info inerenti al certificato di residenza
 def CDR_scraping(url, text, context):
+    cont = 0
     fulfillmentText = ""
     soup = parsing_html(url)
     printText = False
@@ -512,6 +513,7 @@ def CDR_scraping(url, text, context):
                     try:
                         # è la lista dei figli del secondo DIV
                         for k in t.children:
+
                             if k.name is not None:
                                 # verifica sul numero di figli
                                 has_child = len(k.findAll()) != 0
@@ -540,6 +542,8 @@ def CDR_scraping(url, text, context):
                                                     fulfillmentText += k.text.replace(str(z.text), "")
                                                     fulfillmentText += "\n"
                                                     break  # esco per evitare duplicati
+                                            elif "NOTA BENE:" in z.text and context == "accordion_costi_SCHEDA_SERVIZIO_IMPORTED_8868" :
+                                                return fulfillmentText
                                             elif z.name == "table" and printText is True:
                                                 fulfillmentText += "ATTENZIONE: Per visualizzare la tabella riguardo le esenzioni, visita: " + URL_CDR + "\n"
                                             # se il tag è 'li' (elenco puntato), allora metti un a capo
@@ -548,9 +552,7 @@ def CDR_scraping(url, text, context):
                                                 fulfillmentText += z.text
                                                 fulfillmentText += "\n"
                                             # se il tag non ha fratelli precedenti e successivi, allora stampa prima il testo del padre e poi il proprio (ESCLUSIONE DUPLICATI)
-                                            elif len(z.findPreviousSiblings()) == 0 and len(
-                                                    z.findNextSiblings()) == 0 and len(
-                                                    k.text.replace(str(z.text), "")) < 3:
+                                            elif len(z.findPreviousSiblings()) == 0 and len(z.findNextSiblings()) == 0 and len(k.text.replace(str(z.text), "")) < 3:
                                                 if printText is True:
                                                     fulfillmentText += k.text.replace(str(z.text), "")
                                                     fulfillmentText += z.text
@@ -1011,7 +1013,7 @@ def APP_scraping(url, app_name):
     return fulfillmentText
 
 
-print(CDR_scraping(URL_CDR, None, "CDR_INFO"))
+print(CDR_scraping(URL_CDR, None, "CDR_COSTI"))
 
 soupApps = parsing_html(URL_APPS)
 apps = soupApps.find('div', class_="span12 bg-f9f9f9 padding20")
