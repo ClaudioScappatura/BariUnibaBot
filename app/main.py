@@ -1182,4 +1182,4 @@ with open('screapingApp/tuPassi.txt', 'rb') as f:
 with open('screapingApp/apps.txt', 'rb') as f:
     apps = pickle.load(f)
 
-app.run(debug=True, port=8080)
+# app.run(debug=True, port=8080)
