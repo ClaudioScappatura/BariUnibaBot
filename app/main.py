@@ -1153,7 +1153,7 @@ def webhooks():
     }
 
 
-run_once = 1
+run_once = 0
 
 if run_once == 0:
     soupApps = parsing_html(URL_APPS)
