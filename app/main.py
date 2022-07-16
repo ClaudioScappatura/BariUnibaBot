@@ -603,8 +603,8 @@ def CR_scraping(url, text, context):
         fulfillmentText = "COSTO CAMBIO DI RESIDENZA:\nGratuito"
 
     if context == "CR_INFO":
-        fulfillmentText = "Cosa vuoi sapere nello specifico?\n - Cos'è il C.D.R.(cambio di residenza)\n - Come " \
-                          "cambiare residenza\n - Documenti da allegare al C.D.R.\n - Cambio residenza cittadini " \
+        fulfillmentText = "Cosa vuoi sapere nello specifico?\n - Cos'è il C.D.R.(cambio di residenza)\n - Entro quanto richiedere il C.D.R.\n - Come " \
+                          "effettuare il C.D.R.\n - Documenti da allegare al C.D.R.\n - Cambio residenza cittadini " \
                           "stranieri\n - Costo del C.D.R.\n - Tempi necessari per il C.D.R.\n - " \
                           "Moduli per il C.D.R.\n - Orari di apertura ufficio anagrafe "
 
@@ -1182,4 +1182,4 @@ with open('screapingApp/tuPassi.txt', 'rb') as f:
 with open('screapingApp/apps.txt', 'rb') as f:
     apps = pickle.load(f)
 
-# app.run(debug=True, port=8080)
+app.run(debug=True, port=8080)
