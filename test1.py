@@ -667,17 +667,13 @@ def NEWS_scraping(url):
     soup = parsing_html(url)
     notices = soup.findAll('div', class_="notizia padding10")
     for news1 in notices:
-        fulfillmentText += "\n" + news1.a["title"] + "\n" + news1.a["href"] + "\n"
-    """
-    token = '5430259949:AAFWM6G3Nma71fS8SkoeVOQ-Fw_XrSaaVRQ'
-    msg = "Send text with FOTOOOO 😉"
-    img_uri = "https://www.ixbt.com/img/n1/news/2022/3/1/62342d1404eb2_large.jpg"
-    telegram_msg = requests.get(
-        f'https://api.telegram.org/bot{token}/sendPhoto?chat_id={chat_id}&caption={msg}&photo={img_uri}')
-    print(telegram_msg)
-    print(telegram_msg.content)
-    """
+        dataN = news1.find('div', class_ = "data")
+        fulfillmentText += "\n" + news1.a["title"] + "\n" + dataN.text.replace("\n", "") + "\n" + news1.a["href"] + "\n"
+
     return fulfillmentText
+
+
+print(NEWS_scraping(URL_NEWS))
 
 
 # scraping sulle info inerenti alla TARI
@@ -1101,19 +1097,7 @@ with open('app/screapingApp/apps.txt', 'rb') as f:
 # print(CR_scraping(URL_CR, None, "CR_COSA"))
 # print(cie_scraping(URL_CIE, None, "CIE_TEMPI"))
 # print(SANZIONI_scraping(URL_SANZ, None, "SANZ_COME"))
-print(APP_scraping(URL_APPS, "MUVT"))
-print("\n\n")
-print(APP_scraping(URL_APPS, "BARINFORMA"))
-print("\n\n")
-print(APP_scraping(URL_APPS, "BARISOCIAL"))
-print("\n\n")
-print(APP_scraping(URL_APPS, "BARISOLVE"))
-print("\n\n")
-print(APP_scraping(URL_APPS, "INFOSMARTCITY"))
-print("\n\n")
-print(APP_scraping(URL_APPS, "TUPASSI"))
-print("\n\n")
-print(APP_scraping(URL_APPS, "BARIAIUTA"))
+
 #print(APP_scraping(URL_APPS, None))
 # print(EVENT_scraping(None))
 # print(cie_scraping(URL_CIE, "PORTALE CIE", None))

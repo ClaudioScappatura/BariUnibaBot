@@ -819,13 +819,14 @@ def CDR_scraping(url, text, context):
 
     return fulfillmentText
 
-
+# ricerca delle news e stampa di titolo, link e data
 def NEWS_scraping(url):
     fulfillmentText = "\nLE NOTIZIE:\n "
     soup = parsing_html(url)
     notices = soup.findAll('div', class_="notizia padding10")
     for news1 in notices:
-        fulfillmentText += "\n" + news1.a["title"] + "\n" + news1.a["href"] + "\n"
+        dataN = news1.find('div', class_ = "data")
+        fulfillmentText += "\n" + news1.a["title"] + "\n" + dataN.text.replace("\n", "") + "\n" + news1.a["href"] + "\n"
 
     return fulfillmentText
 
