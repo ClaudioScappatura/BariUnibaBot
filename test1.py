@@ -1,8 +1,10 @@
 import os, sys
+sys.setrecursionlimit(100000)
 import unicodedata
 from bs4 import BeautifulSoup
 import re
 import requests
+import pickle
 
 import json
 from flask import Flask, request
@@ -1012,9 +1014,7 @@ def APP_scraping(url, app_name):
     fulfillmentText = re.sub("\. ", ".\n", fulfillmentText)
     return fulfillmentText
 
-
-print(CDR_scraping(URL_CDR, None, "CDR_COSTI"))
-
+"""
 soupApps = parsing_html(URL_APPS)
 apps = soupApps.find('div', class_="span12 bg-f9f9f9 padding20")
 muvt = parsing_html(
@@ -1031,12 +1031,90 @@ tuPassi = parsing_html(
     "https://www.comune.bari.it/web/egov/home/-/asset_publisher/43CuEMaJc6ZV/content/tupassi/20181?inheritRedirect=false&redirect=https%3A%2F%2Fwww.comune.bari.it%2Fweb%2Fegov%2Fhome%3Fp_p_id%3D101_INSTANCE_43CuEMaJc6ZV%26p_p_lifecycle%3D0%26p_p_state%3Dnormal%26p_p_mode%3Dview%26p_p_col_id%3Dcolumn-4%26p_p_col_count%3D1")
 bariAiuta = parsing_html(
     "https://www.comune.bari.it/web/egov/home/-/asset_publisher/43CuEMaJc6ZV/content/bariaiuta/20181?inheritRedirect=false&redirect=https%3A%2F%2Fwww.comune.bari.it%2Fweb%2Fegov%2Fhome%3Fp_p_id%3D101_INSTANCE_43CuEMaJc6ZV%26p_p_lifecycle%3D0%26p_p_state%3Dnormal%26p_p_mode%3Dview%26p_p_col_id%3Dcolumn-4%26p_p_col_count%3D1")
+
+file1 = open("muvt.txt", "wb")
+pickle.dump(muvt, file1)
+file1.close()
+
+file1 = open("barInforma.txt", "wb")
+pickle.dump(barInforma, file1)
+file1.close()
+
+file1 = open("bariSocial.txt", "wb")
+pickle.dump(bariSocial, file1)
+file1.close()
+
+file1 = open("baRisolve.txt", "wb")
+pickle.dump(baRisolve, file1)
+file1.close()
+
+file1 = open("infoSmartCity.txt", "wb")
+pickle.dump(infoSmartCity, file1)
+file1.close()
+
+file1 = open("tuPassi.txt", "wb")
+pickle.dump(tuPassi, file1)
+file1.close()
+
+file1 = open("bariAiuta.txt", "wb")
+pickle.dump(bariAiuta, file1)
+file1.close()
+
+file1 = open("soupApps.txt", "wb")
+pickle.dump(soupApps, file1)
+file1.close()
+
+file1 = open("apps.txt", "wb")
+pickle.dump(apps, file1)
+file1.close()
+"""
+with open('app/screapingApp/muvt.txt', 'rb') as f:
+    muvt = pickle.load(f)
+
+with open('app/screapingApp/barInforma.txt', 'rb') as f:
+    barInforma = pickle.load(f)
+
+with open('app/screapingApp/bariSocial.txt', 'rb') as f:
+    bariSocial = pickle.load(f)
+
+with open('app/screapingApp/baRisolve.txt', 'rb') as f:
+    baRisolve = pickle.load(f)
+
+with open('app/screapingApp/infoSmartCity.txt', 'rb') as f:
+    infoSmartCity = pickle.load(f)
+
+with open('app/screapingApp/bariAiuta.txt', 'rb') as f:
+    bariAiuta = pickle.load(f)
+
+with open('app/screapingApp/soupApps.txt', 'rb') as f:
+    soupApps = pickle.load(f)
+
+with open('app/screapingApp/tuPassi.txt', 'rb') as f:
+    tuPassi = pickle.load(f)
+
+with open('app/screapingApp/apps.txt', 'rb') as f:
+    apps = pickle.load(f)
+
+
 # print(CDR_scraping(URL_CDR, None, "CDR_INFO"))
 # print(NEWS_scraping(URL_NEWS))
 # print(CR_scraping(URL_CR, None, "CR_COSA"))
 # print(cie_scraping(URL_CIE, None, "CIE_TEMPI"))
 # print(SANZIONI_scraping(URL_SANZ, None, "SANZ_COME"))
-# print(APP_scraping(URL_APPS, "MUVT"))
+print(APP_scraping(URL_APPS, "MUVT"))
+print("\n\n")
+print(APP_scraping(URL_APPS, "BARINFORMA"))
+print("\n\n")
+print(APP_scraping(URL_APPS, "BARISOCIAL"))
+print("\n\n")
+print(APP_scraping(URL_APPS, "BARISOLVE"))
+print("\n\n")
+print(APP_scraping(URL_APPS, "INFOSMARTCITY"))
+print("\n\n")
+print(APP_scraping(URL_APPS, "TUPASSI"))
+print("\n\n")
+print(APP_scraping(URL_APPS, "BARIAIUTA"))
+#print(APP_scraping(URL_APPS, None))
 # print(EVENT_scraping(None))
 # print(cie_scraping(URL_CIE, "PORTALE CIE", None))
 # print(cie_scraping(URL_CIE, "UFFICIO ANAGRAFE SAN PASQUALE", None))
