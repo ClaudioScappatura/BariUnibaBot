@@ -819,13 +819,14 @@ def CDR_scraping(url, text, context):
 
     return fulfillmentText
 
+
 # ricerca delle news e stampa di titolo, link e data
 def NEWS_scraping(url):
     fulfillmentText = "\nLE NOTIZIE:\n "
     soup = parsing_html(url)
     notices = soup.findAll('div', class_="notizia padding10")
     for news1 in notices:
-        dataN = news1.find('div', class_ = "data")
+        dataN = news1.find('div', class_="data")
         fulfillmentText += "\n" + news1.a["title"] + "\n" + dataN.text.replace("\n", "") + "\n" + news1.a["href"] + "\n"
 
     return fulfillmentText
@@ -895,6 +896,7 @@ def EVENT_scraping(category):
     return fulfillmentText
 
 
+"""
 def APP_scraping(url, app_name):
     if app_name is not None:
         match app_name:
@@ -967,6 +969,7 @@ def APP_scraping(url, app_name):
         fulfillmentText = "\nCosa vuoi sapere riguardo le App?\n\n - Tutte le app di Bari\n - Una specifica app di Bari"
 
     return fulfillmentText
+"""
 
 
 @app.route("/webhooks", methods=["POST"])
@@ -1120,7 +1123,7 @@ def webhooks():
     # intent info event
     elif query_result.get("intent").get("displayName") == "EVENT_INFO":
         fulfillmentText = EVENT_scraping("EVENT_INFO")
-
+    """
     # intent APPS
     elif query_result.get("intent").get("displayName") == "APP":
         if query_result["parameters"]["MUVT"] != "":
@@ -1143,7 +1146,7 @@ def webhooks():
     # intent info app
     elif query_result.get("intent").get("displayName") == "APP_INFO":
         fulfillmentText = APP_scraping(URL_APPS, "APP_INFO")
-
+    """
     # if fulfillmentText == "":
     #    fulfillmentText = "Ho ancora tanto da imparare, puoi ripetere?"
 
@@ -1155,31 +1158,5 @@ def webhooks():
     }
 
 
-with open('screapingApp/muvt.txt', 'rb') as f:
-    muvt = pickle.load(f)
-
-with open('screapingApp/barInforma.txt', 'rb') as f:
-    barInforma = pickle.load(f)
-
-with open('screapingApp/bariSocial.txt', 'rb') as f:
-    bariSocial = pickle.load(f)
-
-with open('screapingApp/baRisolve.txt', 'rb') as f:
-    baRisolve = pickle.load(f)
-
-with open('screapingApp/infoSmartCity.txt', 'rb') as f:
-    infoSmartCity = pickle.load(f)
-
-with open('screapingApp/bariAiuta.txt', 'rb') as f:
-    bariAiuta = pickle.load(f)
-
-with open('screapingApp/soupApps.txt', 'rb') as f:
-    soupApps = pickle.load(f)
-
-with open('screapingApp/tuPassi.txt', 'rb') as f:
-    tuPassi = pickle.load(f)
-
-with open('screapingApp/apps.txt', 'rb') as f:
-    apps = pickle.load(f)
 
 # app.run(debug=True, port=8080)
