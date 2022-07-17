@@ -18,3 +18,7 @@ Per testare il bot su Telegram digitare @Bari_Uniba_bot<br />
 - Librerie utilizzate per realizzare lo screaping: BeautifulSoup per l'estrazione della pagina HTML<br />
 - Server su cui è stata deployata l'applicazione: Heroku<br />
 - Piattaforma per la gestione del flusso della conversazione con l'utente: DialogFlow
+
+### ATTENZIONE
+
+La versione del chatbot in esecuzione su Heroku presenta il servizio "APP" disabilitato poichè la versione gratuita di Heroku pone dei limiti all'esecuzione del codice quindi quest ultimo sarà abilitato solamente durante l'esecuzione in locale (dimostrazione durante la prova di esame).
